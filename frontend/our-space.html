@@ -278,7 +278,9 @@
 
         async function getFeed(scroll = false) {
             const res = await fetch(`${API}/posts`, { headers: auth() });
-            const posts = await res.json();
+            const allPosts = await res.json();
+            // Sort to show NEWEST at the BOTTOM
+            const posts = allPosts.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
             const cont = document.getElementById('feedCont');
             cont.innerHTML = posts.map(p => {
                 const isSent = p.author === me;
@@ -295,7 +297,11 @@
                     <div class="post-meta">${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
                 </div>`;
             }).join('');
-            if (scroll) { const win = document.getElementById('scrollWin'); win.scrollTop = win.scrollHeight; }
+            // Auto-scroll to the bottom
+            const win = document.getElementById('scrollWin');
+            if (scroll || (win.scrollHeight - win.scrollTop - win.clientHeight < 100)) {
+                win.scrollTop = win.scrollHeight;
+            }
         }
 
         function onSwipe(e, a, c) {

@@ -73,15 +73,7 @@ def log_call(caller: str, type: str):
 def get_calls():
     return sorted(call_history, key=lambda x: x.timestamp, reverse=True)
 
-# Welcome post
-posts.append(Post(
-    id="1",
-    author="System",
-    content="💖 Welcome to our special place! Share your thoughts and love here 💖",
-    timestamp=datetime.now().isoformat(),
-    hearts=0,
-    comments=[]
-))
+
 
 @app.get("/")
 def root():
