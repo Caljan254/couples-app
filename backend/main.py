@@ -1,7 +1,8 @@
 # backend/main.py
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime
 import uuid
 import os
@@ -9,6 +10,12 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 app = FastAPI(title="Couple's Sharing App")
+
+security = HTTPBearer()
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if credentials.credentials != "MyLove":
+        raise HTTPException(status_code=401, detail="Unauthorized - This space is private 💖")
 
 # IMPORTANT: Allow your frontend URL
 app.add_middleware(
@@ -52,11 +59,28 @@ posts.append(Post(
 def root():
     return {"message": "Couple's Sharing App API", "love": "❤️"}
 
-@app.get("/posts")
+# Online status tracking
+user_last_seen = {"Caleb": None, "Caroline": None}
+
+@app.post("/ping", dependencies=[Depends(verify_token)])
+def ping(author: str):
+    user_last_seen[author] = datetime.now()
+    return {"status": "ok"}
+
+@app.get("/status", dependencies=[Depends(verify_token)])
+def get_user_status():
+    status = {"Caleb": False, "Caroline": False}
+    now = datetime.now()
+    for user, last_seen in user_last_seen.items():
+        if last_seen and (now - last_seen).total_seconds() < 15:
+            status[user] = True
+    return status
+
+@app.get("/posts", dependencies=[Depends(verify_token)])
 def get_posts():
     return sorted(posts, key=lambda x: x.timestamp, reverse=True)
 
-@app.post("/post")
+@app.post("/post", dependencies=[Depends(verify_token)])
 def create_post(content: str, author: str):
     new_post = Post(
         id=str(uuid.uuid4()),
@@ -69,7 +93,7 @@ def create_post(content: str, author: str):
     posts.append(new_post)
     return new_post
 
-@app.post("/upload-media")
+@app.post("/upload-media", dependencies=[Depends(verify_token)])
 async def upload_media(author: str, content: str, media: UploadFile = File(...)):
     file_extension = media.filename.split(".")[-1]
     filename = f"{uuid.uuid4()}.{file_extension}"
@@ -103,7 +127,7 @@ async def upload_media(author: str, content: str, media: UploadFile = File(...))
     post_dict['media_type'] = media_type
     return post_dict
 
-@app.post("/heart/{post_id}")
+@app.post("/heart/{post_id}", dependencies=[Depends(verify_token)])
 def add_heart(post_id: str):
     for post in posts:
         if post.id == post_id:
@@ -111,7 +135,7 @@ def add_heart(post_id: str):
             return {"hearts": post.hearts}
     raise HTTPException(status_code=404, detail="Post not found")
 
-@app.post("/comment/{post_id}")
+@app.post("/comment/{post_id}", dependencies=[Depends(verify_token)])
 def add_comment(post_id: str, author: str, comment: str):
     for post in posts:
         if post.id == post_id:

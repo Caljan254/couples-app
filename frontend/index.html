@@ -367,6 +367,17 @@
                 padding: 15px;
             }
         }
+
+        .status-indicator {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #888;
+        }
+
+        .status-online {
+            color: #25D366;
+        }
     </style>
 </head>
 
@@ -402,6 +413,7 @@
                     <!-- User image for Caleb -->
                     <img src="./caleb.png" alt="Caleb">
                     <h3>Caleb</h3>
+                    <div id="status-Caleb" class="status-indicator">Offline ⚪</div>
                     <div class="contact-actions">
                         <a href="https://wa.me/0112199055" target="_blank" class="contact-btn wa-btn">WhatsApp</a>
                         <a href="tel:+254112199055" class="contact-btn call-btn">Call</a>
@@ -415,6 +427,7 @@
                     <!-- User image for Caroline -->
                     <img src="./caroline.png" alt="Caroline">
                     <h3>Caroline</h3>
+                    <div id="status-Caroline" class="status-indicator">Offline ⚪</div>
                     <div class="contact-actions">
                         <a href="https://wa.me/0704229334" target="_blank" class="contact-btn wa-btn">WhatsApp</a>
                         <a href="tel:+254704229334" class="contact-btn call-btn">Call</a>
@@ -477,7 +490,7 @@
         }
 
         // Configuration
-        const API_URL = 'http://localhost:8000'; // Make sure this points to the running backend
+        const API_URL = 'https://couples-backend-afta.onrender.com';
         let currentAuthor = 'Caleb';
 
         // --- Authentication ---
@@ -492,6 +505,7 @@
             const pwd = document.getElementById('passwordId').value;
             if (pwd === 'MyLove') {
                 sessionStorage.setItem('authenticated', 'true');
+                sessionStorage.setItem('password', pwd);
                 showApp();
             } else {
                 alert('Wrong password! 💕');
@@ -505,6 +519,10 @@
                 appScreen.style.display = 'flex';
                 loadPosts();
             }, 500);
+        }
+
+        function getAuthHeaders() {
+            return { 'Authorization': 'Bearer ' + sessionStorage.getItem('password') };
         }
 
         // --- Real-time Clock (+3 Hours) ---
@@ -529,7 +547,10 @@
             const content = document.getElementById('postContent').value;
             if (!content.trim()) return alert('Please write something!');
             try {
-                const res = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, { method: 'POST' });
+                const res = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
                 if (res.ok) {
                     document.getElementById('postContent').value = '';
                     loadPosts();
@@ -550,7 +571,11 @@
             formData.append('media', file);
 
             try {
-                const res = await fetch(`${API_URL}/upload-media`, { method: 'POST', body: formData });
+                const res = await fetch(`${API_URL}/upload-media`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: formData
+                });
                 if (res.ok) {
                     document.getElementById('postContent').value = '';
                     document.getElementById('mediaInput').value = '';
@@ -604,7 +629,11 @@
             formData.append('media', blob, "voice.webm");
 
             try {
-                const res = await fetch(`${API_URL}/upload-media`, { method: 'POST', body: formData });
+                const res = await fetch(`${API_URL}/upload-media`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: formData
+                });
                 if (res.ok) {
                     document.getElementById('postContent').value = '';
                     loadPosts();
@@ -619,7 +648,7 @@
         async function loadPosts() {
             if (sessionStorage.getItem('authenticated') !== 'true') return;
             try {
-                const res = await fetch(`${API_URL}/posts`);
+                const res = await fetch(`${API_URL}/posts`, { headers: getAuthHeaders() });
                 const posts = await res.json();
                 const container = document.getElementById('postsContainer');
                 if (posts.length === 0) {
@@ -657,6 +686,45 @@
 
         // Optional: Auto fetch every 10s
         setInterval(loadPosts, 10000);
+
+        // --- Online Status Tracking ---
+        async function fetchStatus() {
+            if (sessionStorage.getItem('authenticated') !== 'true') return;
+            try {
+                // Tell the backend we are online
+                await fetch(`${API_URL}/ping?author=${currentAuthor}`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+
+                // Get the online status for both
+                const res = await fetch(`${API_URL}/status`, { headers: getAuthHeaders() });
+                const statuses = await res.json();
+
+                for (let user of ['Caleb', 'Caroline']) {
+                    const el = document.getElementById(`status-${user}`);
+                    if (el) {
+                        if (statuses[user]) {
+                            el.innerHTML = 'Ready 🟢';
+                            el.classList.add('status-online');
+                        } else {
+                            el.innerHTML = 'Offline ⚪';
+                            el.classList.remove('status-online');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to update status', e);
+            }
+        }
+
+        // Fetch status every 5 seconds
+        setInterval(fetchStatus, 5000);
+
+        // Initial fetch call
+        if (sessionStorage.getItem('authenticated') === 'true') {
+            fetchStatus();
+        }
     </script>
 </body>
 
