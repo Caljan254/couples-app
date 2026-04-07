@@ -104,14 +104,16 @@ def get_posts():
     return sorted(posts, key=lambda x: x.timestamp, reverse=True)
 
 @app.post("/post", dependencies=[Depends(verify_token)])
-def create_post(content: str, author: str):
+def create_post(content: str, author: str, reply_to_content: Optional[str] = None, reply_to_author: Optional[str] = None):
     new_post = Post(
         id=str(uuid.uuid4()),
         author=author,
         content=content,
         timestamp=datetime.now().isoformat(),
         hearts=0,
-        comments=[]
+        comments=[],
+        reply_to_content=reply_to_content,
+        reply_to_author=reply_to_author
     )
     posts.append(new_post)
     return new_post
