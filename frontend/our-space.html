@@ -1,10 +1,9 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💕 Our Special Space</title>
     <style>
         * {
@@ -25,7 +24,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             text-align: center;
             color: white;
@@ -37,11 +35,6 @@
             margin-bottom: 10px;
         }
 
-        .header p {
-            opacity: 0.9;
-        }
-
-        /* Create Post Card */
         .create-post {
             background: white;
             border-radius: 20px;
@@ -84,11 +77,6 @@
             margin-bottom: 15px;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         .post-actions {
             display: flex;
             gap: 10px;
@@ -103,43 +91,23 @@
             border-radius: 25px;
             font-size: 16px;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .post-btn:active {
-            transform: scale(0.98);
         }
 
         .photo-btn {
             background: #48bb78;
         }
 
-        /* Posts Container */
         .posts-container {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Individual Post */
         .post {
             background: white;
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .post-header {
@@ -192,17 +160,6 @@
             font-size: 20px;
             padding: 5px 10px;
             border-radius: 20px;
-            transition: background 0.2s;
-        }
-
-        .heart-btn:hover,
-        .comment-toggle:hover {
-            background: #f0f0f0;
-        }
-
-        .heart-count {
-            font-size: 16px;
-            margin-left: 5px;
         }
 
         .comments-section {
@@ -214,17 +171,6 @@
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 10px;
-        }
-
-        .comment-author {
-            font-weight: bold;
-            color: #667eea;
-            font-size: 14px;
-        }
-
-        .comment-text {
-            margin-top: 5px;
-            color: #555;
         }
 
         .add-comment {
@@ -250,40 +196,17 @@
             cursor: pointer;
         }
 
-        /* Photo input hidden */
         #photoInput {
             display: none;
         }
 
-        /* Loading */
         .loading {
             text-align: center;
             color: white;
             padding: 20px;
         }
-
-        /* Mobile optimizations */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-        }
     </style>
 </head>
-
-const SECRET_KEY = "couples_love";
-
-// Add password prompt
-const userPass = prompt("Enter our secret code:");
-if (userPass !== SECRET_KEY) {
-document.body.innerHTML = "<h1>🔒 Private Space</h1>
-<p>Only for us ❤️</p>";
-throw new Error("Access denied");
-}
 
 <body>
     <div class="container">
@@ -312,8 +235,8 @@ throw new Error("Access denied");
     </div>
 
     <script>
-        // Configuration - CHANGE THIS TO YOUR BACKEND URL
-        const API_URL = 'http://localhost:8000';  // Change to your server IP
+        // IMPORTANT: Change this to your Render backend URL after deployment
+        const API_URL = 'https://couples-backend-afta.onrender.com';
         let currentAuthor = 'you';
 
         function setAuthor(author) {
@@ -424,7 +347,7 @@ throw new Error("Access denied");
                 container.innerHTML = posts.map(post => `
                     <div class="post">
                         <div class="post-header">
-                            <span class="author">${post.author === 'you' ? '💙 You' : '💖 Loved One'}</span>
+                            <span class="author">${post.author === 'you' ? '💙 You' : post.author === 'loved one' ? '💖 Loved One' : post.author}</span>
                             <span class="timestamp">${new Date(post.timestamp).toLocaleString()}</span>
                         </div>
                         <div class="post-content">${escapeHtml(post.content)}</div>
@@ -440,7 +363,7 @@ throw new Error("Access denied");
                         <div class="comments-section" id="comments-${post.id}" style="display: none;">
                             ${post.comments.map(comment => `
                                 <div class="comment">
-                                    <div class="comment-author">${comment.author === 'you' ? '💙 You' : '💖 Loved One'}</div>
+                                    <div class="comment-author">${comment.author === 'you' ? '💙 You' : comment.author === 'loved one' ? '💖 Loved One' : comment.author}</div>
                                     <div class="comment-text">${escapeHtml(comment.comment)}</div>
                                     <div class="timestamp" style="font-size: 10px;">${new Date(comment.timestamp).toLocaleString()}</div>
                                 </div>
@@ -469,7 +392,7 @@ throw new Error("Access denied");
             return div.innerHTML;
         }
 
-        // Load posts every 5 seconds (real-time updates)
+        // Load posts every 5 seconds
         loadPosts();
         setInterval(loadPosts, 5000);
     </script>
