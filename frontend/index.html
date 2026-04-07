@@ -138,9 +138,42 @@
         }
 
         .real-time {
-            font-size: 1.1em;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
             color: var(--primary);
+            background: rgba(253, 47, 86, 0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(253, 47, 86, 0.2);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #25D366;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .clock-date {
+            font-size: 0.8em;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        .clock-time {
+            font-size: 1em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         /* Main Content */
@@ -402,7 +435,14 @@
                 <a href="#home">Home</a>
                 <a href="#memories">Memories</a>
             </div>
-            <div class="real-time" id="clock">00:00:00</div>
+            <div class="real-time" id="clock">
+                <span class="live-dot"></span>
+                <span>
+                    <span class="clock-date" id="clock-date"></span>
+                    &nbsp;
+                    <span class="clock-time" id="clock-time">00:00:00</span>
+                </span>
+            </div>
         </header>
 
         <main>
@@ -529,9 +569,19 @@
         // --- Real-time Clock ---
         function updateClock() {
             const now = new Date();
-            // Using precise local device time without offset
-            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('clock').innerText = timeString;
+            const timeString = now.toLocaleTimeString('en-KE', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            const dateString = now.toLocaleDateString('en-KE', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+            document.getElementById('clock-time').innerText = timeString;
+            document.getElementById('clock-date').innerText = dateString;
         }
         setInterval(updateClock, 1000);
         updateClock();
@@ -644,6 +694,31 @@
             }
         }
 
+        // --- Timestamp Formatter ---
+        // The backend uses datetime.now().isoformat() which is UTC without 'Z'.
+        // We append 'Z' so JavaScript correctly parses it as UTC and converts to local time (UTC+3).
+        function formatPostTime(rawTimestamp) {
+            // Append 'Z' if the timestamp doesn't already have timezone info
+            const ts = rawTimestamp.endsWith('Z') || rawTimestamp.includes('+') ? rawTimestamp : rawTimestamp + 'Z';
+            const date = new Date(ts);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHrs = Math.floor(diffMs / 3600000);
+
+            // Show relative time for recent messages
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHrs < 24) {
+                return date.toLocaleTimeString('en-KE', { hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+            // Show full date for older posts
+            return date.toLocaleString('en-KE', {
+                month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
+            });
+        }
+
         // --- Feed Loading ---
         async function loadPosts() {
             if (sessionStorage.getItem('authenticated') !== 'true') return;
@@ -673,7 +748,7 @@
                     <div class="post">
                         <div class="post-header">
                             <span class="post-author">${post.author === 'system' ? 'System' : (post.author === 'Caleb' ? '👨 Caleb' : '👩 Caroline')}</span>
-                            <span>${new Date(post.timestamp).toLocaleString()}</span>
+                            <span>${formatPostTime(post.timestamp)}</span>
                         </div>
                         <div class="post-content">${post.content}</div>
                         ${mediaHtml}

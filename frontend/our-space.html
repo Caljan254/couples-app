@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Special Space</title>
-    <!-- Web App Manifest for PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#fd2f56">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -19,6 +18,8 @@
             --dark: #1e1e24;
             --light: #fff5f7;
             --glass: rgba(255, 255, 255, 0.85);
+            --sent-bg: #dcf8c6;
+            --sent-text: #1a3324;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +34,7 @@
             flex-direction: column;
         }
 
-        /* Screens */
+        /* ── Screens ── */
         #login-screen, #identity-screen, #video-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: var(--dark); z-index: 1000;
@@ -45,147 +46,442 @@
         .login-box {
             background: var(--glass); padding: 40px; border-radius: 20px;
             text-align: center; color: var(--dark); width: 90%; max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+        .login-box h2 { margin-bottom: 10px; font-size: 2em; }
+        .login-box p  { margin-bottom: 15px; color: #666; }
 
-        input { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--primary); margin: 15px 0; outline: none; }
-        button, .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; margin: 5px; }
+        input[type="password"], input[type="text"] {
+            width: 100%; padding: 15px; border-radius: 10px;
+            border: 2px solid var(--primary); margin: 10px 0;
+            outline: none; font-family: inherit; font-size: 16px;
+            transition: border-color .2s;
+        }
+        input[type="password"]:focus, input[type="text"]:focus { border-color: #e0243c; }
+
+        button, .btn {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 25px; border-radius: 10px; font-weight: bold;
+            cursor: pointer; margin: 5px; font-family: inherit;
+            transition: transform .15s, opacity .15s;
+        }
+        button:hover { opacity: .9; transform: translateY(-1px); }
 
         /* App Layout */
-        #app { display: none; flex-direction: column; flex: 1; height: 100vh; }
+        #app { display: none; flex-direction: column; flex: 1; height: 100vh; overflow: hidden; }
 
+        /* Header */
         header {
             background: white; padding: 10px 20px;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky; top: 0; z-index: 500;
+            position: sticky; top: 0; z-index: 500; height: 60px; flex-shrink: 0;
         }
         header h1 { font-size: 1.1rem; color: var(--primary); }
         .nav-links { display: flex; gap: 15px; }
-        .nav-links a { text-decoration: none; color: #555; font-weight: 600; cursor: pointer; font-size: 0.9rem;}
-        .nav-links a.active { color: var(--primary); }
-        .real-time { font-size: 0.9rem; font-weight: bold; color: var(--primary); }
+        .nav-links a {
+            text-decoration: none; color: #555; font-weight: 600;
+            cursor: pointer; font-size: 0.9rem; padding: 5px 10px;
+            border-radius: 20px; transition: all .2s;
+        }
+        .nav-links a.active { background: var(--primary); color: white; }
+        .nav-links a:hover:not(.active) { color: var(--primary); }
 
-        main { flex: 1; padding: 15px; width: 100%; max-width: 700px; margin: 0 auto; overflow-y: auto; display: flex; flex-direction: column; scroll-behavior: auto; }
+        /* Live clock in header */
+        .real-time {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.85rem; font-weight: 600; color: var(--primary);
+            background: rgba(253, 47, 86, 0.08);
+            padding: 5px 12px; border-radius: 20px;
+            border: 1px solid rgba(253, 47, 86, 0.2);
+        }
+        .live-dot {
+            width: 7px; height: 7px; background: #25D366;
+            border-radius: 50%; animation: pulse-dot 1.5s infinite; flex-shrink: 0;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: .4; transform: scale(.7); }
+        }
+        .clock-date { font-size: 0.7rem; opacity: .65; font-weight: 400; }
+        .clock-time { font-size: 0.88rem; font-weight: 700; letter-spacing: .5px; }
+
+        /* Main / Chat window */
+        main {
+            flex: 1; width: 100%; max-width: 700px; margin: 0 auto;
+            overflow-y: auto; display: flex; flex-direction: column;
+            position: relative; padding: 15px 15px 0;
+        }
 
         /* Profile Area */
-        .profile-container { display: flex; justify-content: center; margin-bottom: 25px; flex-shrink: 0; }
+        .profile-container { display: flex; justify-content: center; margin-bottom: 20px; flex-shrink: 0; }
         .profile {
             background: var(--glass); padding: 15px; border-radius: 20px; position: relative;
             width: 100%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .profile img { width: 100%; max-width: 220px; border-radius: 20px; object-fit: contain; border: 3px solid var(--primary); }
-        .status-indicator { position: absolute; top: 10px; right: 10px; padding: 5px 12px; background: white; border-radius: 20px; font-weight: bold; font-size: 0.75rem; }
-        .quick-call-actions { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-        .call-icon { width: 40px; height: 40px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-
-        /* Input Area at Bottom */
-        .composer-wrapper { background: var(--glass); border-radius: 20px; padding: 15px; margin: 0 15px 15px 15px; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); flex-shrink: 0; z-index: 600; }
-        #reply-panel { background: rgba(0,0,0,0.04); border-left: 4px solid var(--primary); padding: 8px 12px; margin-bottom: 15px; border-radius: 6px; display: none; }
-        textarea { width: 100%; padding: 12px; border-radius: 20px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; margin-bottom: 10px; outline: none; background: #fff; }
-
-        /* Emoji Grid */
-        #emoji-board {
-            display: none; background: #fff; border-radius: 12px; padding: 10px; margin-bottom: 10px;
-            grid-template-columns: repeat(8, 1fr); gap: 10px; max-height: 150px; overflow-y: auto; font-size: 1.6rem; text-align: center;
+        .profile img {
+            width: 100%; max-width: 200px; border-radius: 20px;
+            object-fit: contain; border: 3px solid var(--primary);
         }
-
-        /* Feed & EMBEDDED Replies */
-        .feed { display: flex; flex-direction: column; gap: 12px; padding-bottom: 10px; }
-        .post {
-            background: var(--glass); border-radius: 18px; padding: 10px 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            cursor: pointer; touch-action: pan-x; max-width: 85%; width: fit-content; min-width: 90px;
+        .status-indicator {
+            position: absolute; top: 10px; right: 10px; padding: 5px 12px;
+            background: white; border-radius: 20px; font-weight: bold; font-size: 0.75rem;
         }
-        .post-sent { align-self: flex-end; background: #9c27b0; color: white; border-bottom-right-radius: 2px; }
-        .post-received { align-self: flex-start; background: #fff; color: var(--dark); border-bottom-left-radius: 2px; }
-
-        /* Embedded Quote Panel */
-        .post-quote {
-            background: rgba(0,0,0,0.08); border-left: 4px solid var(--primary);
-            padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;
-            color: inherit; opacity: 0.9;
+        .quick-call-actions {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px;
         }
-        .quote-name { font-weight: bold; display: block; filter: brightness(1.2); margin-bottom: 2px; }
-        .quote-msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        .call-icon {
+            width: 40px; height: 40px; border-radius: 50%; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            cursor: pointer; text-decoration: none; transition: transform .15s;
+        }
+        .call-icon:hover { transform: scale(1.1); }
 
-        .meta { font-size: 0.65rem; opacity: 0.6; text-align: right; margin-top: 5px; }
-        .post-media { max-width: 100%; border-radius: 12px; margin-top: 8px; }
-
-        /* Sections */
+        /* Section toggles */
         .section { display: none; }
         .section.active { display: block; }
 
+        /* ── Feed / Chat Bubbles ── */
+        .feed {
+            display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px;
+        }
+
+        /* Date separator */
+        .date-sep {
+            text-align: center; margin: 10px 0;
+            font-size: 0.7rem; color: #999; font-weight: 500;
+        }
+        .date-sep span {
+            background: rgba(255,255,255,.7); padding: 3px 12px; border-radius: 20px;
+        }
+
+        /* Message row */
+        .msg-row {
+            display: flex; align-items: flex-end; gap: 7px; position: relative;
+        }
+        .msg-row.sent { flex-direction: row-reverse; }
+        .msg-row.recv { flex-direction: row; }
+
+        /* Swipe wrapper */
+        .msg-swipe-wrap {
+            display: flex; align-items: center;
+            max-width: 78%; position: relative;
+            will-change: transform;
+        }
+        .msg-row.sent .msg-swipe-wrap { flex-direction: row-reverse; }
+
+        /* Swipe reply icon */
+        .swipe-icon {
+            position: absolute; left: -36px;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 13px;
+            opacity: 0; transform: scale(0.4);
+            transition: opacity .15s, transform .15s;
+            pointer-events: none; flex-shrink: 0;
+        }
+        .msg-row.sent .swipe-icon { left: auto; right: -36px; }
+
+        /* Post/Bubble */
+        .post {
+            padding: 8px 12px 6px; border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            word-break: break-word; position: relative;
+            max-width: 100%; cursor: pointer; transition: filter .15s;
+        }
+        .post:active { filter: brightness(.96); }
+        .post-sent {
+            background: var(--sent-bg); color: var(--sent-text);
+            border-bottom-right-radius: 4px; align-self: flex-end;
+        }
+        .post-received {
+            background: #fff; color: var(--dark);
+            border-bottom-left-radius: 4px; align-self: flex-start;
+        }
+
+        /* Sender label */
+        .bubble-sender {
+            font-size: 0.7rem; font-weight: 700;
+            color: var(--primary); margin-bottom: 3px; line-height: 1;
+        }
+
+        /* Quoted block inside bubble */
+        .post-quote {
+            background: rgba(0,0,0,0.06);
+            border-left: 4px solid var(--primary);
+            padding: 6px 10px; border-radius: 8px;
+            margin-bottom: 6px; cursor: pointer;
+            transition: background .15s;
+        }
+        .post-sent .post-quote { background: rgba(0,0,0,0.08); }
+        .post-quote:hover { background: rgba(0,0,0,0.13); }
+        .quote-name {
+            font-size: 0.68rem; font-weight: 700;
+            color: var(--primary); display: block; margin-bottom: 2px;
+        }
+        .post-sent .quote-name { color: #1a7f44; }
+        .quote-msg {
+            font-size: 0.75rem; line-height: 1.35;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden; opacity: .8;
+        }
+
+        /* Media inside bubble */
+        .post-media {
+            max-width: 220px; width: 100%; border-radius: 10px;
+            display: block; margin: 6px 0 4px; cursor: zoom-in;
+        }
+        .post-audio { width: 100%; margin: 4px 0; outline: none; border-radius: 6px; }
+
+        /* Timestamp row */
+        .meta {
+            font-size: 0.62rem; opacity: .6; text-align: right;
+            margin-top: 4px; display: flex; justify-content: flex-end;
+            align-items: center; gap: 3px;
+        }
+        .post-sent .meta { color: #6aad7a; opacity: 1; }
+
+        /* Message avatar */
+        .msg-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: 1.5px solid var(--primary);
+            object-fit: cover; flex-shrink: 0; align-self: flex-end;
+        }
+
+        /* Highlight flash when scrolled-to */
+        .post.flash { animation: flash-hl .65s ease; }
+        @keyframes flash-hl {
+            0%,100% { filter: none; }
+            40%      { filter: brightness(.82) saturate(1.6); }
+        }
+
+        /* Gallery Grid */
+        #gal-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding-bottom: 10px;
+        }
+        .gal-item {
+            aspect-ratio: 1; border-radius: 8px; object-fit: cover;
+            width: 100%; cursor: zoom-in; transition: transform .2s;
+        }
+        .gal-item:hover { transform: scale(1.03); }
+
+        /* Call items */
+        .call-item {
+            background: white; border-radius: 14px; padding: 14px 18px;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .call-icon-type {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .call-icon-type.video { background: rgba(253,47,86,.1); color: var(--primary); }
+        .call-icon-type.audio { background: rgba(37,210,102,.1); color: #22c55e; }
+
+        /* ── Composer Wrapper (pinned to bottom like WhatsApp) ── */
+        .composer-wrapper {
+            background: var(--glass); border-radius: 20px;
+            padding: 15px; margin: 0 0 10px 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            flex-shrink: 0; z-index: 600;
+        }
+
+        /* Reply Preview Panel */
+        #reply-panel {
+            background: rgba(0,0,0,0.04); border-left: 4px solid var(--primary);
+            padding: 8px 36px 8px 12px; margin-bottom: 15px;
+            border-radius: 8px; display: none; position: relative;
+            animation: slide-up .15s ease;
+        }
+        @keyframes slide-up {
+            from { opacity:0; transform:translateY(6px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        #reply-panel .rp-author{
+            font-size: 0.72rem; font-weight: 700; color: var(--primary); margin-bottom: 2px;
+        }
+        #reply-panel .rp-text {
+            font-size: 0.8rem; color: #555;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        #reply-cancel {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; color: #999;
+            font-size: 1rem; padding: 4px; transition: color .15s; margin: 0;
+        }
+        #reply-cancel:hover { color: var(--primary); }
+
+        /* Emoji Board */
+        #emoji-board {
+            display: none; flex-wrap: wrap; gap: 6px;
+            max-height: 140px; overflow-y: auto;
+            margin-bottom: 10px; padding: 8px;
+            background: rgba(255,255,255,.6); border-radius: 12px;
+            animation: slide-up .15s ease;
+        }
+        #emoji-board span {
+            font-size: 1.55rem; cursor: pointer; line-height: 1;
+            padding: 2px; border-radius: 6px; transition: transform .1s;
+        }
+        #emoji-board span:hover { transform: scale(1.25); }
+
+        textarea {
+            width: 100%; padding: 12px; border-radius: 20px;
+            border: 1px solid #ddd; font-family: inherit; font-size: 1rem;
+            margin-bottom: 10px; outline: none; background: #fff;
+            resize: none; overflow-y: auto; min-height: 42px; max-height: 120px;
+            line-height: 1.4; transition: border-color .2s;
+        }
+        textarea:focus { border-color: var(--primary); }
+
+        .compose-actions {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .compose-left  { display: flex; align-items: center; gap: 8px; }
+        .compose-right { display: flex; align-items: center; gap: 8px; }
+
+        .action-btn {
+            padding: 10px 18px; border-radius: 10px;
+            background: var(--primary); color: white;
+            font-weight: bold; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .action-btn.secondary { background: var(--secondary); }
+        .action-btn.icon-btn  {
+            padding: 0; width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(0,0,0,0.06); color: #555;
+            justify-content: center;
+        }
+        .action-btn.icon-btn:hover { background: var(--primary); color: white; }
+        .action-btn.recording { background: #ff3b30 !important; color: white; animation: pulse-mic .8s infinite alternate; }
+        @keyframes pulse-mic {
+            from { box-shadow: 0 0 0 0 rgba(255,59,48,.4); }
+            to   { box-shadow: 0 0 0 8px rgba(255,59,48,0); }
+        }
+
+        input[type="file"].hidden { display: none; }
+
+        /* Video overlay */
         #video-overlay { background: black; z-index: 2000; display: none; }
         #jitsi-box { width: 100%; height: 100%; }
-        .hangup-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; border-radius: 30px; color: white;}
+        .hangup-btn {
+            position: absolute; top: 20px; right: 20px; z-index: 2100;
+            background: red; padding: 10px 20px;
+            border-radius: 30px; color: white;
+        }
 
-        footer { background: var(--dark); color: white; text-align: center; padding: 12px; font-size: 0.75rem; flex-shrink: 0; }
+        /* Footer */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 12px; font-size: 0.75rem; flex-shrink: 0;
+        }
+
+        @media (max-width: 500px) {
+            .action-btn span { display: none; }
+            header { flex-wrap: wrap; height: auto; gap: 6px; padding: 10px; }
+        }
     </style>
 </head>
 
 <body>
 
+    <!-- Login Screen -->
     <div id="login-screen">
         <div class="login-box">
             <h2>💕 Secret Password</h2>
-            <input type="password" id="pass-in" placeholder="...">
-            <button onclick="login()">Enter</button>
+            <p>Enter our special password</p>
+            <input type="password" id="pass-in" placeholder="Password…" onkeydown="if(event.key==='Enter') login()">
+            <br>
+            <button onclick="login()">Enter ❤️</button>
         </div>
     </div>
 
+    <!-- Identity Screen -->
     <div id="identity-screen" class="hidden">
         <div class="login-box">
             <h2>Who are you?</h2>
-            <button onclick="setMe('Caleb')">👨 Caleb</button>
-            <button onclick="setMe('Caroline')" style="margin-top:10px">👩 Caroline</button>
+            <p style="margin-bottom:20px">Choose your identity</p>
+            <button onclick="enterAs('Caleb')">👨 Caleb</button>
+            <button onclick="enterAs('Caroline')" style="margin-top:10px">👩 Caroline</button>
         </div>
     </div>
 
+    <!-- Video Call Overlay -->
     <div id="video-overlay">
-        <button class="hangup-btn" onclick="hangupNow()">Hangup 📞</button>
+        <button class="hangup-btn" onclick="stopCall()">Hangup 📞</button>
         <div id="jitsi-box"></div>
     </div>
 
+    <!-- Main App -->
     <div id="app">
         <header>
             <h1>💕 Love</h1>
             <div class="nav-links">
-                <a onclick="go('feed')" id="h-feed" class="active">Home</a>
-                <a onclick="go('gallery')" id="h-gallery">Gallery</a>
-                <a onclick="go('calls')" id="h-calls">Calls</a>
+                <a onclick="go('feed')"    id="h-feed"    class="active">Home</a>
+                <a onclick="go('gallery')" id="h-gallery" >Gallery</a>
+                <a onclick="go('calls')"   id="h-calls"   >Calls</a>
             </div>
-            <div class="real-time" id="clock">00:00:00</div>
+            <div class="real-time" id="clock">
+                <span class="live-dot"></span>
+                <span>
+                    <span class="clock-date" id="clock-date"></span>
+                    &nbsp;
+                    <span class="clock-time" id="clock-time">00:00:00</span>
+                </span>
+            </div>
         </header>
 
-        <main id="chatScroll">
-            <div id="profile-area" class="profile-container"></div>
+        <main id="chatWindow">
+            <!-- Partner Profile Card -->
+            <div id="profile-zone" class="profile-container"></div>
+
+            <!-- Feed Section -->
             <div id="feed-sec" class="section active">
                 <div class="feed" id="feedHook"></div>
             </div>
+
+            <!-- Gallery Section -->
             <div id="gallery-sec" class="section">
-                <div id="gallHook" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;"></div>
+                <div id="gal-grid"></div>
             </div>
+
+            <!-- Calls Section -->
             <div id="calls-sec" class="section">
                 <div id="callsHook"></div>
             </div>
         </main>
 
+        <!-- Composer -->
         <div class="composer-wrapper" id="composer">
+            <!-- Reply Preview -->
             <div id="reply-panel">
-                <span id="rep-auth" style="font-weight:bold; color:var(--primary); font-size:0.75rem"></span><br>
-                <span id="rep-msg" style="font-size:0.8rem; color:#666"></span>
-                <span style="float:right; cursor:pointer" onclick="cancelReply()">✕</span>
+                <div class="rp-author" id="rep-auth"></div>
+                <div class="rp-text"   id="rep-msg"></div>
+                <button id="reply-cancel" onclick="resetRep()" title="Cancel reply">✕</button>
             </div>
+
+            <!-- Emoji Board -->
             <div id="emoji-board"></div>
-            <textarea id="txtIn" rows="1" placeholder="Write something sweet..." oninput="pushTyping()"></textarea>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <button onclick="postText()">Send</button>
-                    <span style="font-size:1.6rem; cursor:pointer; margin-left:10px" onclick="toggleEmoji()">😊</span>
+
+            <textarea id="txtIn" rows="1" placeholder="Write something sweet…"
+                oninput="autoResize(this); pingTyping();"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();post();}"></textarea>
+
+            <div class="compose-actions">
+                <div class="compose-left">
+                    <button class="action-btn" onclick="post()">Send 💌</button>
+                    <button class="action-btn icon-btn" onclick="toggleEmo()" title="Emoji">😊</button>
                 </div>
-                <div>
-                    <button class="btn secondary" onclick="document.getElementById('fileIn').click()"><i class="fas fa-camera"></i></button>
-                    <button class="btn secondary" id="voiceBtn" onclick="handleVoice()"><i class="fas fa-microphone" id="micIco"></i></button>
+                <div class="compose-right">
+                    <button class="action-btn icon-btn secondary" onclick="document.getElementById('fileIn').click()" title="Photo/Video">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button class="action-btn icon-btn secondary" id="voiceBtn" onclick="doVoice()" title="Voice message">
+                        <i class="fas fa-microphone" id="micIco"></i>
+                    </button>
                 </div>
             </div>
             <input type="file" id="fileIn" class="hidden" accept="image/*,video/*" onchange="upload()">
@@ -195,157 +491,486 @@
     </div>
 
     <script>
-        const API = 'https://couples-backend-afta.onrender.com';
-        let me = '', key = '', callApi = null, isTyping = false, timer, repData = null;
+        /* ─── CONFIG ─────────────────────────────────── */
+        const API   = 'https://couples-backend-afta.onrender.com';
+        const EMOJIS = ['❤️','💖','💕','😘','🥰','😍','😊','☺️','🤩','😂','💍','💎','🧸','🌹','🌸',
+                         '🌺','✨','🔥','💑','💏','🫶','😅','👀','🙈','🙊','🦋','🌙','⭐','🎀','🎁',
+                         '🥂','🍓','🍫','☕','🌈','🤍','🕊️','💌','😜','🤗'];
 
-        const emojis = ["❤️","💖","💕","😘","🥰","😍","😊","☺️","🤩","💍","💎","🧸","🌹","🌸","🌺","✨","🔥","💑","💏"];
+        let me = '', key = '', callApi = null;
+        let isTyping = false, typingTimer = null;
+        let repData  = null;
+        let mic = null, micChunks = [];
+        let allPosts = [];
 
+        /* ─── AUTH ───────────────────────────────────── */
         function login() {
-            if (document.getElementById('pass-in').value === 'MyLove') {
-                key = 'MyLove'; sessionStorage.setItem('key', key);
+            const v = document.getElementById('pass-in').value;
+            if (v === 'MyLove') {
+                key = v; sessionStorage.setItem('key', v);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
-            } else alert('Wrong! 💕');
+            } else {
+                document.getElementById('pass-in').style.borderColor = '#e53935';
+                setTimeout(() => document.getElementById('pass-in').style.borderColor = '', 800);
+                alert('Wrong password! 💕');
+            }
         }
 
-        function setMe(n) {
+        function enterAs(n) {
             me = n; sessionStorage.setItem('user', n);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            startup();
+            start();
         }
 
+        function auth() { return { 'Authorization': 'Bearer ' + key }; }
+
+        /* ─── SESSION RESTORE ────────────────────────── */
         if (sessionStorage.getItem('user')) {
-            me = sessionStorage.getItem('user'); key = sessionStorage.getItem('key');
+            me  = sessionStorage.getItem('user');
+            key = sessionStorage.getItem('key') || 'MyLove';
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            startup();
+            start();
         }
 
-        function startup() {
-            onProfile();
-            pullFeed(true);
-            setInterval(() => pullFeed(), 8000);
-            setInterval(() => ping(isTyping), 3000);
-            setInterval(onStatus, 4000);
-            setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+        /* ─── START ──────────────────────────────────── */
+        function start() {
+            getProfile();
+            loadFeed(true);
+            startClock();
+            buildEmojiBoard();
+
+            setInterval(() => loadFeed(),        8000);
+            setInterval(() => ping(isTyping),    3000);
+            setInterval(checkSt,                 4000);
         }
 
-        function onProfile() {
-            const isMeC = me === 'Caleb'; const opp = isMeC ? 'Caroline' : 'Caleb'; const img = isMeC ? './caroline.png' : './caleb.png';
-            document.getElementById('profile-area').innerHTML = `
+        /* ─── CLOCK ──────────────────────────────────── */
+        function startClock() {
+            const tick = () => {
+                const n = new Date();
+                document.getElementById('clock-time').textContent =
+                    n.toLocaleTimeString('en-KE', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true });
+                document.getElementById('clock-date').textContent =
+                    n.toLocaleDateString('en-KE', { weekday:'short', month:'short', day:'numeric' });
+            };
+            tick(); setInterval(tick, 1000);
+        }
+
+        /* ─── PROFILE CARD ───────────────────────────── */
+        function getProfile() {
+            const opp    = me === 'Caleb' ? 'Caroline' : 'Caleb';
+            const oppImg = me === 'Caleb' ? './caroline.png' : './caleb.png';
+            document.getElementById('profile-zone').innerHTML = `
                 <div class="profile">
-                    <img src="${img}" alt="${opp}">
+                    <img src="${oppImg}" alt="${opp}">
                     <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
-                        <a onclick="makeCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
-                        <a onclick="makeCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
+                        <a onclick="runCall('Audio')" class="call-icon" style="color:#2563eb" title="Audio call">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a onclick="runCall('Video')" class="call-icon" style="color:var(--primary)" title="Video call">
+                            <i class="fas fa-video"></i>
+                        </a>
                     </div>
                 </div>`;
         }
 
-        async function makeCall(t) {
-            document.getElementById('video-overlay').style.display = 'flex';
-            callApi = new JitsiMeetExternalAPI("meet.jit.si", { roomName: "OurSafeSpecialRoom_V7", parentNode: document.querySelector('#jitsi-box') });
-            await fetch(`${API}/log-call?caller=${me}&type=${t}`, { method: 'POST', headers: auth() });
-        }
-        function hangupNow() { if(callApi) callApi.dispose(); document.getElementById('video-overlay').style.display = 'none'; }
-
-        function auth() { return { 'Authorization': 'Bearer ' + key }; }
-
-        async function postText() {
-            const v = document.getElementById('txtIn').value; if (!v.trim()) return;
-            const r = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
-            await fetch(`${API}/post?content=${encodeURIComponent(v)}&author=${me}&${r}`, { method: 'POST', headers: auth() });
-            document.getElementById('txtIn').value = ''; cancelReply(); pullFeed(true);
+        /* ─── TIMESTAMP HELPERS ──────────────────────── */
+        // Backend sends UTC without 'Z' — append it so JS converts correctly (fixes 3-hr offset for EAT)
+        function fixTs(ts) {
+            return (ts && !ts.endsWith('Z') && !ts.includes('+')) ? ts + 'Z' : (ts || '');
         }
 
-        async function upload() {
-            const f = document.getElementById('fileIn').files[0]; const fd = new FormData(); fd.append('author', me); fd.append('content', "📸 Moment"); fd.append('media', f);
-            await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-            pullFeed(true);
+        function fmtTime(ts) {
+            const d   = new Date(fixTs(ts));
+            const now = new Date();
+            const mins = Math.floor((now - d) / 60000);
+            if (mins < 1)  return 'now';
+            if (mins < 60) return mins + 'm ago';
+            if (d.toDateString() === now.toDateString())
+                return d.toLocaleTimeString('en-KE', { hour:'2-digit', minute:'2-digit', hour12:true });
+            return d.toLocaleString('en-KE', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
         }
 
-        async function pullFeed(scroll = false) {
-            const res = await fetch(`${API}/posts`, { headers: auth() });
-            const allPosts = await res.json();
-            const posts = allPosts.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-            const hook = document.getElementById('feedHook');
-            hook.innerHTML = posts.map(p => {
-                const isSent = p.author === me;
-                let reply = p.reply_to_content ? `<div class="post-quote"><span class="quote-name">${p.reply_to_author} ❤️</span><span class="quote-msg">${p.reply_to_content}</span></div>` : '';
-                let media = p.image_url ? `<img src="${API}${p.image_url}" class="post-media" onclick="window.open('${API}${p.image_url}')">` : '';
-                return `
-                <div class="post ${isSent ? 'post-sent':'post-received'}" 
-                     onmousedown="onSwipe(event, this, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" 
-                     ontouchstart="onSwipe(event, this, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
-                    ${reply}
-                    <div>${p.content}</div>
-                    ${media}
-                    <div class="meta">${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
-                </div>`;
-            }).join('');
-            if (scroll) { const win = document.getElementById('chatScroll'); win.scrollTop = win.scrollHeight; }
+        function fmtDate(ts) {
+            const d = new Date(fixTs(ts));
+            const n = new Date();
+            if (d.toDateString() === n.toDateString()) return 'Today';
+            const y = new Date(n); y.setDate(n.getDate() - 1);
+            if (d.toDateString() === y.toDateString()) return 'Yesterday';
+            return d.toLocaleDateString('en-KE', { weekday:'long', day:'numeric', month:'long' });
         }
 
-        function onSwipe(e, a, c) {
-            const t = e.target.closest('.post'); if (!t) return;
-            let sx = e.clientX || e.touches[0].clientX;
-            const move = (me) => { let dx = (me.clientX || me.touches[0].clientX) - sx; if (dx > 20) t.style.transform = `translateX(${Math.min(dx, 60)}px)`; };
-            const end = (ee) => { let dx = (ee.clientX || ee.changedTouches[0].clientX) - sx; if (dx > 40) setRep(a, c); t.style.transform = ''; document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end); document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end); };
-            document.addEventListener('mousemove', move); document.addEventListener('mouseup', end); document.addEventListener('touchmove', move); document.addEventListener('touchend', end);
+        function escHtml(str) {
+            return String(str)
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
 
-        function setRep(a, c) {
-            repData = { author: a, content: c }; document.getElementById('reply-panel').style.display = 'block';
-            document.getElementById('rep-auth').innerText = a; document.getElementById('rep-msg').innerText = c;
-            document.getElementById('txtIn').focus();
+        /* ─── LOAD FEED ──────────────────────────────── */
+        async function loadFeed(toBeBottom = false) {
+            if (!me) return;
+            try {
+                const res  = await fetch(`${API}/posts`, { headers: auth() });
+                const raw  = await res.json();
+                allPosts   = raw.sort((a, b) => new Date(fixTs(a.timestamp)) - new Date(fixTs(b.timestamp)));
+                renderFeed(toBeBottom);
+                loadGallery();
+            } catch(e) { console.error(e); }
         }
-        function cancelReply() { repData = null; document.getElementById('reply-panel').style.display = 'none'; }
-        
-        function pushTyping() { if (!isTyping) { isTyping = true; ping(true); } clearTimeout(timer); timer = setTimeout(() => { isTyping = false; ping(false); }, 4000); }
-        async function ping(t) { await fetch(`${API}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
-        
-        async function onStatus() {
-            const res = await fetch(`${API}/status`, { headers: auth() }); const d = await res.json();
-            const opp = me === 'Caleb' ? 'Caroline' : 'Caleb'; const el = document.getElementById(`st-${opp}`);
-            if (el) {
-                if (d.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "var(--primary)"; }
-                else if (d[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#22c55e"; }
-                else { el.innerHTML = "Offline ⚪"; el.style.color = "#888"; }
+
+        function renderFeed(toBeBottom = false) {
+            const opp    = me === 'Caleb' ? 'Caroline' : 'Caleb';
+            const oppImg = me === 'Caleb' ? './caroline.png' : './caleb.png';
+            const meImg  = me === 'Caleb' ? './caleb.png'    : './caroline.png';
+            const hook   = document.getElementById('feedHook');
+
+            let html = '', lastDate = '';
+
+            allPosts.forEach((p, idx) => {
+                const day = fmtDate(p.timestamp);
+                if (day !== lastDate) {
+                    html += `<div class="date-sep"><span>${day}</span></div>`;
+                    lastDate = day;
+                }
+
+                const isSent  = p.author === me;
+                const rowCls  = isSent ? 'sent' : 'recv';
+                const avatar  = isSent ? meImg : oppImg;
+
+                // Quoted block
+                let quoteHtml = '';
+                if (p.reply_to_content) {
+                    const origIdx = allPosts.findIndex(x =>
+                        x.content === p.reply_to_content && x.author === p.reply_to_author);
+                    quoteHtml = `
+                        <div class="post-quote" onclick="scrollToMsg(${origIdx})" title="Jump to original">
+                            <span class="quote-name">${escHtml(p.reply_to_author)} ❤️</span>
+                            <span class="quote-msg">${escHtml(p.reply_to_content)}</span>
+                        </div>`;
+                }
+
+                // Media
+                let mediaHtml = '';
+                if (p.image_url) {
+                    const url = `${API}${p.image_url}`;
+                    if (p.media_type === 'video') {
+                        mediaHtml = `<video src="${url}" class="post-media" controls style="cursor:default"></video>`;
+                    } else if (p.media_type === 'audio') {
+                        mediaHtml = `<audio src="${url}" class="post-audio" controls></audio>`;
+                    } else {
+                        mediaHtml = `<img src="${url}" class="post-media" loading="lazy" onclick="window.open('${url}','_blank')">`;
+                    }
+                }
+
+                const senderLabel = !isSent
+                    ? `<div class="bubble-sender">${escHtml(p.author)}</div>` : '';
+
+                html += `
+                    <div class="msg-row ${rowCls}" id="msg-${idx}" data-idx="${idx}">
+                        ${!isSent ? `<img src="${avatar}" class="msg-avatar" alt="${opp}">` : ''}
+                        <div class="msg-swipe-wrap" id="swipe-${idx}">
+                            <div class="swipe-icon" id="sicon-${idx}"><i class="fas fa-reply"></i></div>
+                            <div class="post ${isSent ? 'post-sent' : 'post-received'}" id="bubble-${idx}">
+                                ${senderLabel}
+                                ${quoteHtml}
+                                <div>${escHtml(p.content)}</div>
+                                ${mediaHtml}
+                                <div class="meta">
+                                    <span>${fmtTime(p.timestamp)}</span>
+                                    ${isSent ? '<i class="fas fa-check-double" style="font-size:.55rem;color:#34b7f1"></i>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        ${isSent ? `<img src="${avatar}" class="msg-avatar" alt="${me}">` : ''}
+                    </div>`;
+            });
+
+            if (!html) {
+                html = `<div style="text-align:center;padding:40px;opacity:.5;font-size:.9rem;">
+                            No messages yet.<br>Say something sweet! 💌</div>`;
+            }
+
+            hook.innerHTML = html;
+
+            // Attach swipe listeners after render
+            allPosts.forEach((p, idx) => {
+                const row = document.getElementById(`msg-${idx}`);
+                if (row) attachSwipe(row, idx, p.author, p.content);
+            });
+
+            if (toBeBottom) {
+                const win = document.getElementById('chatWindow');
+                requestAnimationFrame(() => { win.scrollTop = win.scrollHeight; });
             }
         }
 
+        /* ─── SWIPE TO REPLY ─────────────────────────── */
+        function attachSwipe(row, idx, author, content) {
+            const swipeWrap = document.getElementById(`swipe-${idx}`);
+            const icon      = document.getElementById(`sicon-${idx}`);
+            if (!swipeWrap) return;
+
+            const isSent    = row.classList.contains('sent');
+            const THRESHOLD = 60;
+            let startX = null, startY = null, dragging = false, triggered = false;
+
+            const getX = e => e.touches ? e.touches[0].clientX : e.clientX;
+            const getY = e => e.touches ? e.touches[0].clientY : e.clientY;
+
+            const onStart = e => {
+                startX = getX(e); startY = getY(e);
+                dragging = false; triggered = false;
+            };
+
+            const onMove = e => {
+                if (startX === null) return;
+                const dx = getX(e) - startX;
+                const dy = Math.abs(getY(e) - startY);
+                if (!dragging && dy > 10 && dy > Math.abs(dx)) { startX = null; return; }
+                dragging = true;
+
+                const validDir = isSent ? dx < 0 : dx > 0;
+                if (!validDir) return;
+
+                const dist = Math.min(Math.abs(dx), THRESHOLD + 20);
+                const tx   = isSent ? -dist : dist;
+                swipeWrap.style.transition = 'none';
+                swipeWrap.style.transform  = `translateX(${tx}px)`;
+
+                const frac = Math.min(dist / THRESHOLD, 1);
+                icon.style.opacity   = frac;
+                icon.style.transform = `scale(${0.4 + 0.6 * frac})`;
+
+                if (e.cancelable) e.preventDefault();
+
+                if (dist >= THRESHOLD && !triggered) {
+                    triggered = true;
+                    navigator.vibrate && navigator.vibrate(40);
+                    icon.style.background = '#22c55e';
+                    setRep(author, content);
+                }
+            };
+
+            const onEnd = () => {
+                startX = null; dragging = false;
+                swipeWrap.style.transition = 'transform .25s cubic-bezier(.25,.46,.45,.94)';
+                swipeWrap.style.transform  = '';
+                setTimeout(() => {
+                    icon.style.opacity   = '0';
+                    icon.style.transform = 'scale(0.4)';
+                    icon.style.background = 'var(--primary)';
+                }, 200);
+            };
+
+            swipeWrap.addEventListener('mousedown',  onStart);
+            swipeWrap.addEventListener('touchstart', onStart, { passive: true });
+            document.addEventListener('mousemove',  onMove);
+            document.addEventListener('touchmove',  onMove, { passive: false });
+            document.addEventListener('mouseup',    onEnd);
+            document.addEventListener('touchend',   onEnd);
+        }
+
+        /* ─── SCROLL TO ORIGINAL ─────────────────────── */
+        function scrollToMsg(idx) {
+            const el = document.getElementById(`bubble-${idx}`);
+            if (!el) return;
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('flash');
+            setTimeout(() => el.classList.remove('flash'), 700);
+        }
+
+        /* ─── REPLY STATE ────────────────────────────── */
+        function setRep(author, content) {
+            repData = { author, content };
+            document.getElementById('rep-auth').textContent = author;
+            document.getElementById('rep-msg').textContent  = content;
+            document.getElementById('reply-panel').style.display = 'block';
+            document.getElementById('txtIn').focus();
+        }
+
+        function resetRep() {
+            repData = null;
+            document.getElementById('reply-panel').style.display = 'none';
+        }
+
+        /* ─── SEND POST ──────────────────────────────── */
+        async function post() {
+            const v = document.getElementById('txtIn').value.trim();
+            if (!v) return;
+
+            let qs = `content=${encodeURIComponent(v)}&author=${me}`;
+            if (repData) {
+                qs += `&reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${encodeURIComponent(repData.author)}`;
+            }
+
+            document.getElementById('txtIn').value = '';
+            autoResize(document.getElementById('txtIn'));
+            resetRep();
+
+            try {
+                await fetch(`${API}/post?${qs}`, { method: 'POST', headers: auth() });
+                loadFeed(true);
+            } catch(e) { console.error(e); }
+        }
+
+        /* ─── UPLOAD MEDIA ───────────────────────────── */
+        async function upload() {
+            const f  = document.getElementById('fileIn').files[0]; if (!f) return;
+            const fd = new FormData();
+            fd.append('author', me); fd.append('content', '📸 Shared a moment'); fd.append('media', f);
+            try {
+                await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
+                loadFeed(true);
+            } catch(e) { console.error(e); }
+            document.getElementById('fileIn').value = '';
+        }
+
+        /* ─── VOICE RECORDING ────────────────────────── */
+        async function doVoice() {
+            const btn = document.getElementById('voiceBtn');
+            const ico = document.getElementById('micIco');
+            if (mic && mic.state === 'recording') {
+                mic.stop();
+                btn.classList.remove('recording');
+                ico.className = 'fas fa-microphone';
+            } else {
+                try {
+                    const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mic = new MediaRecorder(s); micChunks = [];
+                    mic.ondataavailable = e => micChunks.push(e.data);
+                    mic.onstop = async () => {
+                        const bl = new Blob(micChunks, { type: 'audio/webm' });
+                        const fd = new FormData();
+                        fd.append('author', me); fd.append('content', '🎤 Voice message'); fd.append('media', bl, 'v.webm');
+                        await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
+                        loadFeed(true);
+                    };
+                    mic.start();
+                    btn.classList.add('recording');
+                    ico.className = 'fas fa-stop';
+                } catch(e) { alert('Microphone permission denied.'); }
+            }
+        }
+
+        /* ─── GALLERY ────────────────────────────────── */
+        async function loadGallery() {
+            try {
+                const imgs = allPosts.filter(p => p.image_url && p.media_type !== 'audio');
+                document.getElementById('gal-grid').innerHTML = imgs
+                    .map(p => {
+                        const url = `${API}${p.image_url}`;
+                        return p.media_type === 'video'
+                            ? `<video src="${url}" class="gal-item" onclick="window.open('${url}','_blank')"></video>`
+                            : `<img  src="${url}" class="gal-item" loading="lazy" onclick="window.open('${url}','_blank')">`;
+                    }).join('') || '<p style="padding:20px;color:#999;text-align:center">No photos yet 📷</p>';
+            } catch(e) {}
+        }
+
+        /* ─── CALLS ──────────────────────────────────── */
+        async function loadCallHistory() {
+            try {
+                const res   = await fetch(`${API}/calls`, { headers: auth() });
+                const calls = await res.json();
+                document.getElementById('callsHook').innerHTML = calls
+                    .map(c => `
+                        <div class="call-item">
+                            <div class="call-icon-type ${c.type.toLowerCase()}">
+                                <i class="fas fa-${c.type === 'Video' ? 'video' : 'phone'}"></i>
+                            </div>
+                            <div style="flex:1">
+                                <div style="font-weight:600;font-size:.95rem">${escHtml(c.caller)} → ${escHtml(c.receiver)}</div>
+                                <div style="font-size:.72rem;color:#999;margin-top:2px">${c.type} Call · ${fmtTime(c.timestamp)}</div>
+                            </div>
+                        </div>`)
+                    .join('') || '<p style="padding:20px;color:#999;text-align:center">No call history yet 📞</p>';
+            } catch(e) {}
+        }
+
+        async function runCall(type) {
+            document.getElementById('video-overlay').style.display = 'flex';
+            callApi = new JitsiMeetExternalAPI('meet.jit.si', {
+                roomName: 'TheSecretSecuritySpace_V7_Final',
+                parentNode: document.querySelector('#jitsi-box')
+            });
+            await fetch(`${API}/log-call?caller=${me}&type=${type}`, { method: 'POST', headers: auth() });
+        }
+
+        function stopCall() {
+            if (callApi) callApi.dispose();
+            document.getElementById('video-overlay').style.display = 'none';
+            loadCallHistory();
+        }
+
+        /* ─── STATUS ─────────────────────────────────── */
+        async function ping(typing) {
+            if (!me) return;
+            try { await fetch(`${API}/ping?author=${me}&typing=${typing}`, { method: 'POST', headers: auth() }); }
+            catch(e) {}
+        }
+
+        async function checkSt() {
+            if (!me) return;
+            try {
+                const res = await fetch(`${API}/status`, { headers: auth() });
+                const d   = await res.json();
+                const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
+                const el  = document.getElementById(`st-${opp}`);
+                if (el) {
+                    if (d.typing && d.typing[opp]) {
+                        el.innerHTML = 'Typing… ✍️'; el.style.color = 'var(--primary)';
+                    } else if (d[opp]) {
+                        el.innerHTML = 'Ready 🟢'; el.style.color = '#22c55e';
+                    } else {
+                        el.innerHTML = 'Offline ⚪'; el.style.color = '#888';
+                    }
+                }
+            } catch(e) {}
+        }
+
+        /* ─── SECTION NAV ────────────────────────────── */
         function go(s) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(`${s}-sec`).classList.add('active');
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
             document.getElementById(`h-${s}`).classList.add('active');
-            document.getElementById('composer').style.display = (s === 'feed') ? 'block' : 'none';
+            document.getElementById('composer').style.display = s === 'feed' ? 'block' : 'none';
+            if (s === 'calls') loadCallHistory();
         }
 
-        function toggleEmoji() {
+        /* ─── EMOJI BOARD ────────────────────────────── */
+        function buildEmojiBoard() {
+            document.getElementById('emoji-board').innerHTML =
+                EMOJIS.map(e => `<span onclick="insEmoji('${e}')">${e}</span>`).join('');
+        }
+
+        function toggleEmo() {
             const b = document.getElementById('emoji-board');
-            if (b.style.display === 'grid') b.style.display = 'none'; else {
-                b.innerHTML = emojis.map(e => `<span onclick="document.getElementById('txtIn').value += '${e}'">${e}</span>`).join('');
-                b.style.display = 'grid';
-            }
+            b.style.display = b.style.display === 'flex' ? 'none' : 'flex';
         }
 
-        let rec; let chunks = [];
-        async function handleVoice() {
-            const ico = document.getElementById('micIco');
-            if (ico.classList.contains('active')) { rec.stop(); ico.classList.remove('active'); ico.style.color = 'inherit'; } else {
-                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-                rec = new MediaRecorder(s); rec.start(); ico.classList.add('active'); ico.style.color = 'red';
-                chunks = []; rec.ondataavailable = e => chunks.push(e.data);
-                rec.onstop = async () => {
-                    const bl = new Blob(chunks, { type: 'audio/webm' });
-                    const fd = new FormData(); fd.append('author', me); fd.append('content', "🎤 Voice"); fd.append('media', bl, "v.webm");
-                    await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-                    pullFeed(true);
-                };
-            }
+        function insEmoji(e) {
+            const ta  = document.getElementById('txtIn');
+            const s   = ta.selectionStart, end = ta.selectionEnd;
+            ta.value  = ta.value.slice(0, s) + e + ta.value.slice(end);
+            ta.selectionStart = ta.selectionEnd = s + e.length;
+            ta.focus(); autoResize(ta);
+        }
+
+        /* ─── TYPING PING ────────────────────────────── */
+        function pingTyping() {
+            if (!isTyping) { isTyping = true; ping(true); }
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => { isTyping = false; ping(false); }, 3000);
+        }
+
+        /* ─── HELPERS ────────────────────────────────── */
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
         }
     </script>
 </body>
