@@ -979,6 +979,11 @@
             '🌺', '✨', '🔥', '💑', '💏', '🫶', '😅', '👀', '🙈', '🙊', '🦋', '🌙', '⭐', '🎀', '🎁',
             '🥂', '🍓', '🍫', '☕', '🌈', '🤍', '🕊️', '💌', '😜', '🤗'];
 
+        const NICKNAMES = {
+            'Caleb': 'M❤️I❤️N😋E😘',
+            'Caroline': 'LOVE ❤️'
+        };
+
         let me = '', key = '', callApi = null;
         let isTyping = false, typingTimer = null;
         let repData = null;
@@ -1003,6 +1008,11 @@
             me = n; sessionStorage.setItem('user', n);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
+            
+            // Set header title to partner's nickname
+            const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
+            document.querySelector('header h1').innerHTML = `💕 ${getAlias(opp)}`;
+            
             start();
         }
 
@@ -1014,6 +1024,11 @@
             key = sessionStorage.getItem('key') || 'MyLove';
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
+            
+            // Set header title to partner's nickname
+            const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
+            document.querySelector('header h1').innerHTML = `💕 ${getAlias(opp)}`;
+            
             start();
         }
 
@@ -1041,13 +1056,20 @@
             tick(); setInterval(tick, 1000);
         }
 
+        function getAlias(name) {
+            return NICKNAMES[name] || name;
+        }
+
         /* ─── PROFILE CARD ───────────────────────────── */
         function getProfile() {
             const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
             const oppImg = me === 'Caleb' ? './caroline.png' : './caleb.png';
+            const oppNick = getAlias(opp);
+            
             document.getElementById('profile-zone').innerHTML = `
                 <div class="profile">
-                    <img src="${oppImg}" alt="${opp}">
+                    <img src="${oppImg}" alt="${oppNick}">
+                    <h3 style="margin-top:10px; font-size: 1.2rem;">${oppNick}</h3>
                     <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
                         <a onclick="runCall('Audio')" class="call-icon" style="color:#2563eb" title="Audio call">
@@ -1144,7 +1166,7 @@
                     quoteHtml = `
                         <div class="post-quote" onclick="scrollToMsg(${origIdx})" title="Jump to original">
                             <div class="quote-inner">
-                                <span class="quote-name">${escHtml(p.reply_to_author)} ❤️</span>
+                                <span class="quote-name">${escHtml(getAlias(p.reply_to_author))} ❤️</span>
                                 <span class="quote-msg">${escHtml(p.reply_to_content)}</span>
                             </div>
                         </div>`;
@@ -1164,11 +1186,11 @@
                 }
 
                 const senderLabel = !isSent
-                    ? `<div class="bubble-sender">${escHtml(p.author)}</div>` : '';
+                    ? `<div class="bubble-sender">${escHtml(getAlias(p.author))}</div>` : '';
 
                 html += `
                     <div class="msg-row ${rowCls}" id="msg-${idx}" data-idx="${idx}">
-                        ${!isSent ? `<img src="${avatar}" class="msg-avatar" alt="${opp}">` : ''}
+                        ${!isSent ? `<img src="${avatar}" class="msg-avatar" alt="${getAlias(opp)}">` : ''}
                         <div class="msg-swipe-wrap" id="swipe-${idx}">
                             <div class="swipe-icon" id="sicon-${idx}"><i class="fas fa-reply"></i></div>
                             <div class="post ${isSent ? 'post-sent' : 'post-received'}" id="bubble-${idx}">
@@ -1190,7 +1212,7 @@
                             title="Reply to this message">
                             <i class="fas fa-reply"></i>
                         </button>
-                        ${isSent ? `<img src="${avatar}" class="msg-avatar" alt="${me}">` : ''}
+                        ${isSent ? `<img src="${avatar}" class="msg-avatar" alt="${getAlias(me)}">` : ''}
                     </div>`;
             });
 
@@ -1292,7 +1314,7 @@
         function setRep(author, content) {
             // trim any accidental leading/trailing whitespace from inline template
             repData = { author: author.trim(), content: content.trim() };
-            document.getElementById('rep-auth').textContent = repData.author;
+            document.getElementById('rep-auth').textContent = getAlias(repData.author);
             document.getElementById('rep-msg').textContent  = repData.content;
             document.getElementById('reply-panel').style.display = 'block';
             document.getElementById('txtIn').focus();
@@ -1388,7 +1410,7 @@
                                 <i class="fas fa-${c.type === 'Video' ? 'video' : 'phone'}"></i>
                             </div>
                             <div style="flex:1">
-                                <div style="font-weight:600;font-size:.95rem">${escHtml(c.caller)} → ${escHtml(c.receiver)}</div>
+                                <div style="font-weight:600;font-size:.95rem">${escHtml(getAlias(c.caller))} → ${escHtml(getAlias(c.receiver))}</div>
                                 <div style="font-size:.72rem;color:#999;margin-top:2px">${c.type} Call · ${fmtTime(c.timestamp)}</div>
                             </div>
                         </div>`)
