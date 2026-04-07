@@ -14,7 +14,7 @@ app = FastAPI(title="Couple's Sharing App")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://couples-frontend.onrender.com", 
+        "https://couples-frontend.onrender.com/", 
         "http://localhost:8000",
         "http://127.0.0.1:8000"
     ],
