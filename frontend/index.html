@@ -491,6 +491,7 @@
 
         // Configuration
         const API_URL = 'https://couples-backend-afta.onrender.com';
+
         let currentAuthor = 'Caleb';
 
         // --- Authentication ---
@@ -525,11 +526,10 @@
             return { 'Authorization': 'Bearer ' + sessionStorage.getItem('password') };
         }
 
-        // --- Real-time Clock (+3 Hours) ---
+        // --- Real-time Clock ---
         function updateClock() {
             const now = new Date();
-            // User requested to add 3 hours specifically
-            now.setHours(now.getHours() + 3);
+            // Using precise local device time without offset
             const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             document.getElementById('clock').innerText = timeString;
         }
