@@ -18,14 +18,10 @@
             --secondary: #ff758c;
             --dark: #1e1e24;
             --light: #fff5f7;
-            --glass: rgba(255, 255, 255, 0.85);
+            --glass: rgba(255, 255, 255, 0.9);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Outfit', sans-serif;
@@ -35,259 +31,140 @@
             overflow-x: hidden;
         }
 
-        /* Login & Identity Overlay */
-        #login-screen, #identity-screen {
+        /* Screens */
+        #login-screen, #identity-screen, #video-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background: var(--dark);
+            z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
             flex-direction: column;
             color: white;
-            transition: opacity 0.5s;
+            transition: 0.3s;
         }
 
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         .login-box {
             background: var(--glass);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            color: var(--dark);
+            padding: 40px; border-radius: 20px; text-align: center; color: var(--dark);
+            width: 90%; max-width: 400px;
         }
 
-        .login-box h2 {
-            margin-bottom: 20px;
-            font-size: 2em;
+        input {
+            width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--primary);
+            margin: 15px 0; outline: none;
         }
 
-        .login-box button, .identity-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 18px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.2s;
-            margin: 10px;
-        }
-
-        .login-box input {
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid var(--primary);
-            font-size: 16px;
-            width: 80%;
-            margin-bottom: 20px;
-            outline: none;
+        button, .btn {
+            background: var(--primary); color: white; border: none; padding: 12px 25px;
+            border-radius: 10px; font-weight: bold; cursor: pointer; margin: 5px;
         }
 
         /* App Layout */
-        #app {
-            display: none;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        #app { display: none; flex-direction: column; min-height: 100vh; }
 
         header {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: white; padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 500;
+            white-space: nowrap; overflow-x: auto;
         }
 
-        header h1 { color: var(--primary); font-size: 1.5em; }
+        header h1 { font-size: 1.2rem; color: var(--primary); margin-right: 15px; }
 
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; cursor: pointer; }
-        .nav-links a:hover { color: var(--primary); }
+        .nav-links { display: flex; gap: 15px; font-size: 0.9rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #555; font-weight: 600; cursor: pointer; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
 
-        .real-time { font-size: 1.1em; font-weight: bold; color: var(--primary); }
+        .real-time { font-size: 0.9rem; font-weight: bold; color: var(--primary); margin-left: 15px; }
 
-        main {
-            flex: 1;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        main { flex: 1; padding: 20px; width: 100%; max-width: 700px; margin: 0 auto; }
 
-        .profile-container { display: flex; justify-content: center; margin-bottom: 20px; }
-        
+        /* Profile Area */
+        .profile-container { display: flex; justify-content: center; margin-bottom: 25px; }
         .profile {
-            background: var(--glass);
-            padding: 20px;
-            border-radius: 20px;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            position: relative;
+            background: white; padding: 20px; border-radius: 20px; position: relative;
+            width: 100%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-
         .profile img {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            border-radius: 20px;
-            object-fit: contain;
-            background: rgba(255,255,255,0.2);
-            border: 5px solid var(--primary);
+            width: 100%; max-width: 250px; border-radius: 15px;
+            object-fit: contain; background: #fdfdfd; border: 3px solid var(--primary);
         }
-
         .status-indicator {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-            font-weight: bold;
-            z-index: 10;
+            position: absolute; top: 10px; right: 10px; padding: 5px 12px;
+            background: white; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: bold; font-size: 0.8rem;
         }
-
         .quick-call-actions {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 10;
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px;
         }
-
         .call-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-decoration: none;
-            cursor: pointer;
+            width: 45px; height: 45px; border-radius: 50%; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); text-decoration: none;
         }
 
-        .icon-video { color: #fd2f56; }
-        .icon-phone { color: #25D366; }
-
-        /* Video Call Overlay */
-        #video-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-        }
-
-        #jitsi-container { flex: 1; width: 100%; height: 100%; }
-
-        .close-video-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: red;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            z-index: 2100;
-            cursor: pointer;
-        }
-
+        /* Compose */
         .create-post {
-            background: var(--glass);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-
+        #reply-preview {
+            background: #fdf2f4; border-left: 4px solid var(--primary);
+            padding: 8px; margin-bottom: 10px; border-radius: 4px; display: none;
+        }
         textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 15px;
-            font-size: 16px;
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee;
+            background: #fafafa; font-family: inherit; font-size: 1rem; margin-bottom: 10px;
         }
 
-        .action-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .action-btn.secondary { background: #ff758c; margin-left:10px; }
-
+        /* Feed & Interactions */
         .feed { display: flex; flex-direction: column; gap: 15px; }
-
         .post {
-            background: var(--glass);
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background: white; border-radius: 18px; padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            position: relative; transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            touch-action: pan-y;
         }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
+        .post-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 8px; }
         .post-author { font-weight: bold; color: var(--primary); }
+        .post-content { font-size: 1.05rem; margin-bottom: 10px; word-wrap: break-word; }
+        .post-media { max-width: 100%; border-radius: 12px; margin-top: 5px; display: block; }
+        audio { width: 100%; height: 40px; margin-top: 5px; }
+        video { width: 100%; border-radius: 12px; margin-top: 5px; }
 
-        .post-media { max-width: 100%; border-radius: 10px; }
-
-        #gallery-section {
-            display: none;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+        /* Reply indicator on swipe */
+        .post::after {
+            content: "\f3e5"; font-family: "Font Awesome 6 Free"; font-weight: 900;
+            position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
+            font-size: 20px; color: var(--primary); opacity: 0; transition: 0.2s;
         }
 
-        .gallery-item {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 10px;
-            object-fit: cover;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-        }
+        /* Sections */
+        .section { display: none; }
+        #feed-section.active, #gallery-section.active, #calls-section.active { display: block; }
 
-        footer { background: var(--dark); color: white; text-align: center; padding: 20px; margin-top: auto; }
+        /* Gallery/Calls Grid */
+        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+        .gallery-item { width: 100%; aspect-ratio: 1; border-radius: 12px; object-fit: cover; background: #eee; }
+        
+        .call-log-item {
+            background: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 8px;
+        }
+        .call-log-icon { font-size: 1.5rem; color: var(--primary); }
+
+        /* Overlays */
+        #video-overlay { background: black; z-index: 2000; display: none; }
+        #jitsi-container { width: 100%; height: 100%; }
+        .close-video-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; }
+
+        footer { background: var(--dark); color: white; text-align: center; padding: 15px; font-size: 0.8rem; }
     </style>
 </head>
 
@@ -295,196 +172,297 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <h2>Welcome, Love 💕</h2>
-            <input type="password" id="passwordId" placeholder="Password...">
-            <br>
-            <button onclick="checkPassword()">Enter</button>
+            <h2>💕 Secret Password</h2>
+            <input type="password" id="passwordId" placeholder="...">
+            <button onclick="login()">Enter</button>
         </div>
     </div>
 
     <div id="identity-screen" class="hidden">
         <div class="login-box">
-            <h2>Who are you? 💕</h2>
-            <button class="identity-btn" onclick="selectIdentity('Caleb')">👨 Caleb</button>
-            <button class="identity-btn" onclick="selectIdentity('Caroline')">👩 Caroline</button>
+            <h2>Select Your Identity</h2>
+            <button class="identity-btn" onclick="selectMe('Caleb')">👨 Caleb</button>
+            <button class="identity-btn" onclick="selectMe('Caroline')">👩 Caroline</button>
         </div>
     </div>
 
     <div id="video-overlay">
-        <button class="close-video-btn" onclick="closeVideoCall()">Close Call</button>
+        <button class="close-video-btn" onclick="hangup()">Hangup 📞</button>
         <div id="jitsi-container"></div>
     </div>
 
     <div id="app">
         <header>
-            <h1>💕 Our Space</h1>
+            <h1>💕 Love</h1>
             <div class="nav-links">
-                <a onclick="showSection('feed')">Home</a>
-                <a onclick="showSection('gallery')">Gallery</a>
+                <a onclick="show('feed')" id="nav-feed" class="active">Home</a>
+                <a onclick="show('gallery')" id="nav-gallery">Gallery</a>
+                <a onclick="show('calls')" id="nav-calls">Calls</a>
             </div>
             <div class="real-time" id="clock">00:00:00</div>
         </header>
 
         <main>
+            <!-- Top Partner Bio -->
             <div id="profile-area" class="profile-container"></div>
 
-            <div id="feed-section">
+            <!-- Feed Section -->
+            <div id="feed-section" class="section active">
                 <div class="create-post">
-                    <textarea id="postContent" rows="3" placeholder="Write to your love..." oninput="handleTyping()"></textarea>
-                    <button class="action-btn" onclick="createTextPost()">📝 Post</button>
-                    <button class="action-btn secondary" onclick="document.getElementById('mediaInput').click()">📷 Media</button>
-                    <button class="action-btn secondary" id="recordBtn" onclick="toggleAudioRecording()">🎙️ Audio</button>
-                    <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" onchange="uploadMedia()">
+                    <div id="reply-preview">
+                        <span id="reply-label" style="font-size:0.8rem; font-weight:bold; color:var(--primary)">Replying to:</span><br>
+                        <span id="reply-text" style="font-size:0.9rem"></span>
+                        <span style="float:right; cursor:pointer" onclick="cancelReply()">✕</span>
+                    </div>
+                    <textarea id="postContent" rows="3" placeholder="Write something sweet..." oninput="pushTyping()"></textarea>
+                    <div style="display:flex; justify-content:space-between">
+                        <div>
+                            <button onclick="createText()"><i class="fas fa-paper-plane"></i> Send</button>
+                        </div>
+                        <div>
+                            <button class="btn secondary" onclick="document.getElementById('mediaInput').click()"><i class="fas fa-camera"></i></button>
+                            <button class="btn secondary" id="micBtn" onclick="toggleMic()"><i class="fas fa-microphone"></i></button>
+                        </div>
+                    </div>
+                    <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" onchange="upload()">
                 </div>
                 <div class="feed" id="postsContainer"></div>
             </div>
 
-            <div id="gallery-section"></div>
+            <div id="gallery-section" class="section">
+                <div class="grid-view" id="galleryContainer"></div>
+            </div>
+
+            <div id="calls-section" class="section">
+                <div id="callsContainer"></div>
+            </div>
         </main>
 
-        <footer>Built with ❤️ for Caleb & Caroline</footer>
+        <footer>Together forever since 2024 ❤️</footer>
     </div>
 
     <script>
         const API_URL = 'https://couples-backend-afta.onrender.com';
-        let currentAuthor = '';
-        let api = null; // Jitsi API instance
+        let me = '', pwd = '', jitsiApi = null, replyId = null, isTyping = false, typingTimer;
 
-        function checkPassword() {
-            if (document.getElementById('passwordId').value === 'MyLove') {
-                sessionStorage.setItem('authenticated', 'true');
-                sessionStorage.setItem('password', 'MyLove');
+        // Login Logic
+        function login() {
+            pwd = document.getElementById('passwordId').value;
+            if (pwd === 'MyLove') {
+                sessionStorage.setItem('pwd', pwd);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
-            } else { alert('Wrong password! 💕'); }
+            } else alert('Wrong! 💕');
         }
 
-        function selectIdentity(name) {
-            currentAuthor = name;
-            sessionStorage.setItem('userName', name);
+        function selectMe(name) {
+            me = name; sessionStorage.setItem('user', name);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            setupApp();
+            init();
         }
 
-        if (sessionStorage.getItem('userName')) {
-            currentAuthor = sessionStorage.getItem('userName');
+        // Auto Login
+        if (sessionStorage.getItem('user')) {
+            me = sessionStorage.getItem('user'); pwd = sessionStorage.getItem('pwd');
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            setupApp();
+            init();
         }
 
-        function setupApp() {
-            setupProfile();
-            loadPosts();
-            setInterval(loadPosts, 10000);
-            setInterval(fetchStatus, 3000);
-            setInterval(() => {
-                document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-            }, 1000);
+        function init() {
+            renderProfile();
+            refreshFeed();
+            setInterval(refreshFeed, 10000);
+            setInterval(refreshStatus, 4000);
+            setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+            setupSwipe();
         }
 
-        function setupProfile() {
-            const isCaleb = currentAuthor === 'Caleb';
-            const opp = isCaleb ? 'Caroline' : 'Caleb';
-            const oppImg = isCaleb ? './caroline.png' : './caleb.png';
-            const oppPhone = isCaleb ? '+254704229334' : '+254112199055';
-
+        function renderProfile() {
+            const isMeC = me === 'Caleb';
+            const opp = isMeC ? 'Caroline' : 'Caleb';
+            const oppImg = isMeC ? './caroline.png' : './caleb.png';
+            const oppPhone = isMeC ? '+254704229334' : '+254112199055';
+            
             document.getElementById('profile-area').innerHTML = `
                 <div class="profile">
                     <img src="${oppImg}" alt="${opp}">
-                    <div id="status-${opp}" class="status-indicator">Offline ⚪</div>
+                    <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
-                        <a href="tel:${oppPhone}" class="call-icon icon-phone"><i class="fas fa-phone"></i></a>
-                        <a onclick="startVideoCall()" class="call-icon icon-video"><i class="fas fa-video"></i></a>
+                        <a onclick="doCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
+                        <a onclick="doCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
                     </div>
-                </div>
-            `;
+                </div>`;
         }
 
-        function startVideoCall() {
+        // Call Logic (WhatsApp Style in-app Jitsi)
+        async function doCall(type) {
             document.getElementById('video-overlay').style.display = 'flex';
-            const domain = "meet.jit.si";
+            const room = "SecretCouplesRoom_AF_2024_";
             const options = {
-                roomName: "OurPrivateLoveSpace_CalebCaroline_2024",
-                width: "100%",
-                height: "100%",
+                roomName: room,
                 parentNode: document.querySelector('#jitsi-container'),
-                userInfo: { displayName: currentAuthor },
-                interfaceConfigOverwrite: {
-                    TOOLBAR_BUTTONS: ['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen', 'fittowindow', 'hangup', 'profile', 'chat', 'settings', 'videoquality', 'filmstrip', 'feedback', 'stats', 'shortcuts', 'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'],
-                }
+                userInfo: { displayName: me },
+                configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: type === 'Audio' },
+                interfaceConfigOverwrite: { TOOLBAR_BUTTONS: ['microphone', 'camera', 'hangup', 'tileview'] }
             };
-            api = new JitsiMeetExternalAPI(domain, options);
+            jitsiApi = new JitsiMeetExternalAPI("meet.jit.si", options);
+            await fetch(`${API_URL}/log-call?caller=${me}&type=${type}`, { method: 'POST', headers: auth() });
         }
 
-        function closeVideoCall() {
-            if (api) { api.dispose(); api = null; }
+        function hangup() {
+            if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
             document.getElementById('video-overlay').style.display = 'none';
         }
 
-        function getAuthHeaders() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('password') }; }
+        // Core API
+        function auth() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('pwd') }; }
 
-        async function createTextPost() {
-            const content = document.getElementById('postContent').value;
-            if (!content.trim()) return;
-            await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
-                method: 'POST', headers: getAuthHeaders()
-            });
+        async function createText() {
+            const txt = document.getElementById('postContent').value;
+            if (!txt.trim()) return;
+            const fullContent = replyId ? `↪️ Replying: "${replyId}" - ${txt}` : txt;
+            await fetch(`${API_URL}/post?content=${encodeURIComponent(fullContent)}&author=${me}`, { method: 'POST', headers: auth() });
             document.getElementById('postContent').value = '';
-            loadPosts();
+            cancelReply(); refreshFeed();
         }
 
-        async function loadPosts() {
-            const res = await fetch(`${API_URL}/posts`, { headers: getAuthHeaders() });
+        async function upload() {
+            const f = document.getElementById('mediaInput').files[0];
+            const fd = new FormData(); fd.append('author', me); fd.append('content', "Shared a memory ❤️"); fd.append('media', f);
+            await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: auth(), body: fd });
+            refreshFeed();
+        }
+
+        async function refreshFeed() {
+            const res = await fetch(`${API_URL}/posts`, { headers: auth() });
             const posts = await res.json();
-            document.getElementById('postsContainer').innerHTML = posts.map(p => `
-                <div class="post">
-                    <div class="post-header">
-                        <span class="post-author">${p.author}</span>
-                        <span>${new Date(p.timestamp).toLocaleTimeString()}</span>
-                    </div>
-                    <div>${p.content}</div>
-                    ${p.image_url ? `<img src="${API_URL}${p.image_url}" class="post-media">` : ''}
-                </div>
-            `).join('');
+            const cont = document.getElementById('postsContainer');
+            cont.innerHTML = posts.map(p => {
+                let media = '';
+                if (p.image_url) {
+                    const u = `${API_URL}${p.image_url}`;
+                    const t = p.media_type || 'image';
+                    if (t === 'video') media = `<video src="${u}" controls></video>`;
+                    else if (t === 'audio') media = `<audio src="${u}" controls></audio>`;
+                    else media = `<img src="${u}" class="post-media">`;
+                }
+                return `
+                <div class="post" data-id="${p.content.substring(0,30)}">
+                    <div class="post-header"><span class="post-author">${p.author}</span><span>${new Date(p.timestamp).toLocaleTimeString()}</span></div>
+                    <div class="post-content">${p.content}</div>
+                    ${media}
+                </div>`;
+            }).join('');
         }
 
-        async function uploadMedia() {
-            const file = document.getElementById('mediaInput').files[0];
-            const fd = new FormData();
-            fd.append('author', currentAuthor); fd.append('content', "Shared a moment! ❤️"); fd.append('media', file);
-            await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: getAuthHeaders(), body: fd });
-            loadPosts();
+        // Typing & Online
+        function pushTyping() {
+            if (!isTyping) { isTyping = true; ping(true); }
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => { isTyping = false; ping(false); }, 3000);
         }
-
-        let isTyping = false;
-        function handleTyping() { if (!isTyping) { isTyping = true; sendPing(true); setTimeout(() => { isTyping = false; sendPing(false); }, 3000); } }
-
-        async function sendPing(typing = false) {
-            await fetch(`${API_URL}/ping?author=${currentAuthor}&typing=${typing}`, { method: 'POST', headers: getAuthHeaders() });
-        }
-
-        async function fetchStatus() {
-            const res = await fetch(`${API_URL}/status`, { headers: getAuthHeaders() });
+        async function ping(t = false) { await fetch(`${API_URL}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
+        
+        async function refreshStatus() {
+            const res = await fetch(`${API_URL}/status`, { headers: auth() });
             const data = await res.json();
-            const opp = currentAuthor === 'Caleb' ? 'Caroline' : 'Caleb';
-            const el = document.getElementById(`status-${opp}`);
+            const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
+            const el = document.getElementById(`st-${opp}`);
             if (el) {
-                if (data.typing && data.typing[opp]) { el.innerHTML = 'Typing... ✍️'; el.style.color = '#fd2f56'; }
-                else if (data[opp]) { el.innerHTML = 'Ready 🟢'; el.style.color = '#25D366'; }
-                else { el.innerHTML = 'Offline ⚪'; el.style.color = '#888'; }
+                if (data.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "var(--primary)"; }
+                else if (data[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#22c55e"; }
+                else { el.innerHTML = "Offline ⚪"; el.style.color = "#888"; }
             }
         }
 
-        function showSection(s) {
-            document.getElementById('feed-section').style.display = s === 'feed' ? 'block' : 'none';
-            document.getElementById('gallery-section').style.display = s === 'gallery' ? 'grid' : 'none';
-            if (s === 'gallery') {
-                fetch(`${API_URL}/posts`, { headers: getAuthHeaders() }).then(r => r.json()).then(ps => {
-                    document.getElementById('gallery-section').innerHTML = ps.filter(p => p.image_url).map(p => `<img src="${API_URL}${p.image_url}" class="gallery-item">`).join('');
-                });
+        // Audio Recording
+        let rec; let chunks = [];
+        async function toggleMic() {
+            const b = document.getElementById('micBtn');
+            if (b.classList.contains('rec')) {
+                rec.stop(); b.classList.remove('rec'); b.style.color = 'inherit';
+            } else {
+                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+                rec = new MediaRecorder(s); rec.start();
+                b.classList.add('rec'); b.style.color = 'red';
+                chunks = []; rec.ondataavailable = e => chunks.push(e.data);
+                rec.onstop = async () => {
+                    const bl = new Blob(chunks, { type: 'audio/webm' });
+                    const fd = new FormData(); fd.append('author', me); fd.append('content', "Voice message 🎤"); fd.append('media', bl, "voice.webm");
+                    await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: auth(), body: fd });
+                    refreshFeed();
+                };
             }
+        }
+
+        // Swipe & Reply logic
+        function setupSwipe() {
+            let sx = 0, target = null;
+            document.addEventListener('touchstart', e => { 
+                target = e.target.closest('.post');
+                if (target) sx = e.touches[0].clientX;
+            });
+            document.addEventListener('touchmove', e => {
+                if (!target) return;
+                const dist = e.touches[0].clientX - sx;
+                if (dist > 20 && dist < 100) target.style.transform = `translateX(${dist}px)`;
+            });
+            document.addEventListener('touchend', e => {
+                if (!target) return;
+                const dist = (e.changedTouches[0].clientX - sx);
+                if (dist > 60) {
+                    replyId = target.getAttribute('data-id');
+                    document.getElementById('reply-preview').style.display = 'block';
+                    document.getElementById('reply-text').innerText = replyId + "...";
+                }
+                target.style.transform = ''; target = null;
+            });
+            // Desktop helper: click to reply
+            document.addEventListener('click', e => {
+                const p = e.target.closest('.post');
+                if (p && !e.target.closest('audio, img, video')) {
+                     replyId = p.getAttribute('data-id');
+                     document.getElementById('reply-preview').style.display = 'block';
+                     document.getElementById('reply-text').innerText = replyId + "...";
+                }
+            });
+        }
+
+        function cancelReply() { replyId = null; document.getElementById('reply-preview').style.display = 'none'; }
+
+        // Navigation
+        function show(sec) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`${sec}-section`).classList.add('active');
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            document.getElementById(`nav-${sec}`).classList.add('active');
+            
+            if (sec === 'gallery') loadGallery();
+            if (sec === 'calls') loadCalls();
+        }
+
+        async function loadGallery() {
+            const res = await fetch(`${API_URL}/posts`, { headers: auth() });
+            const posts = await res.json();
+            document.getElementById('galleryContainer').innerHTML = posts
+                .filter(p => p.image_url && (!p.media_type || p.media_type === 'image'))
+                .map(p => `<img src="${API_URL}${p.image_url}" class="gallery-item" onclick="window.open('${API_URL}${p.image_url}')">`).join('');
+        }
+
+        async function loadCalls() {
+            const res = await fetch(`${API_URL}/calls`, { headers: auth() });
+            const logs = await res.json();
+            document.getElementById('callsContainer').innerHTML = logs.map(l => `
+                <div class="call-log-item">
+                    <div class="call-log-icon">${l.type === 'Video' ? '📹' : '📞'}</div>
+                    <div style="flex:1">
+                        <div style="font-weight:bold">${l.type} Call</div>
+                        <div style="font-size:0.8rem; color:#888">${l.caller} → ${l.receiver}</div>
+                    </div>
+                    <div style="font-size:0.8rem; color:#888">${new Date(l.timestamp).toLocaleTimeString()}</div>
+                </div>`).join('');
         }
     </script>
 </body>

@@ -42,8 +42,33 @@ class Post(BaseModel):
     hearts: int = 0
     comments: List[dict] = []
 
-# Store posts in memory
+# Store posts and calls in memory
 posts = []
+call_history = []
+
+class CallLog(BaseModel):
+    id: str
+    caller: str
+    receiver: str
+    type: str # "Video" or "Audio"
+    timestamp: str
+
+@app.post("/log-call", dependencies=[Depends(verify_token)])
+def log_call(caller: str, type: str):
+    receiver = "Caroline" if caller == "Caleb" else "Caleb"
+    new_log = CallLog(
+        id=str(uuid.uuid4()),
+        caller=caller,
+        receiver=receiver,
+        type=type,
+        timestamp=datetime.now().isoformat()
+    )
+    call_history.append(new_log)
+    return new_log
+
+@app.get("/calls", dependencies=[Depends(verify_token)])
+def get_calls():
+    return sorted(call_history, key=lambda x: x.timestamp, reverse=True)
 
 # Welcome post
 posts.append(Post(
