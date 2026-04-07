@@ -59,68 +59,65 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             position: sticky; top: 0; z-index: 500;
         }
-        header h1 { font-size: 1.3rem; color: var(--primary); }
+        header h1 { font-size: 1.1rem; color: var(--primary); }
         .nav-links { display: flex; gap: 15px; }
-        .nav-links a { text-decoration: none; color: #555; font-weight: 600; cursor: pointer; }
+        .nav-links a { text-decoration: none; color: #555; font-weight: 600; cursor: pointer; font-size: 0.9rem;}
         .nav-links a.active { color: var(--primary); }
-        .real-time { font-size: 1rem; font-weight: bold; color: var(--primary); }
+        .real-time { font-size: 0.9rem; font-weight: bold; color: var(--primary); }
 
-        main { flex: 1; padding: 20px; width: 100%; max-width: 700px; margin: 0 auto; overflow-y: auto; display: flex; flex-direction: column; }
+        main { flex: 1; padding: 15px; width: 100%; max-width: 700px; margin: 0 auto; overflow-y: auto; display: flex; flex-direction: column; scroll-behavior: auto; }
 
         /* Profile Area */
         .profile-container { display: flex; justify-content: center; margin-bottom: 25px; flex-shrink: 0; }
         .profile {
-            background: var(--glass); padding: 20px; border-radius: 20px; position: relative;
+            background: var(--glass); padding: 15px; border-radius: 20px; position: relative;
             width: 100%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .profile img { width: 100%; max-width: 250px; border-radius: 20px; object-fit: contain; border: 4px solid var(--primary); }
-        .status-indicator { position: absolute; top: 10px; right: 10px; padding: 5px 12px; background: white; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .profile img { width: 100%; max-width: 220px; border-radius: 20px; object-fit: contain; border: 3px solid var(--primary); }
+        .status-indicator { position: absolute; top: 10px; right: 10px; padding: 5px 12px; background: white; border-radius: 20px; font-weight: bold; font-size: 0.75rem; }
         .quick-call-actions { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-        .call-icon { width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .call-icon { width: 40px; height: 40px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
-        /* Create Post area - Now at bottom for WhatsApp experience */
-        .create-post { background: var(--glass); border-radius: 20px; padding: 15px; margin-top: 15px; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); position: sticky; bottom: 0; z-index: 600; flex-shrink: 0;}
-        #reply-panel { background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary); padding: 10px; margin-bottom: 15px; border-radius: 5px; display: none; }
-        textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; margin-bottom: 10px; outline: none; }
+        /* Input Area at Bottom */
+        .composer-wrapper { background: var(--glass); border-radius: 20px; padding: 15px; margin: 0 15px 15px 15px; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); flex-shrink: 0; z-index: 600; }
+        #reply-panel { background: rgba(0,0,0,0.04); border-left: 4px solid var(--primary); padding: 8px 12px; margin-bottom: 15px; border-radius: 6px; display: none; }
+        textarea { width: 100%; padding: 12px; border-radius: 20px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; margin-bottom: 10px; outline: none; background: #fff; }
 
-        /* Emoji Board */
+        /* Emoji Grid */
         #emoji-board {
-            display: none; background: white; border-radius: 12px; padding: 10px;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.1); margin-bottom: 10px;
-            grid-template-columns: repeat(8, 1fr); gap: 10px;
-            max-height: 150px; overflow-y: auto; font-size: 1.5rem; text-align: center;
+            display: none; background: #fff; border-radius: 12px; padding: 10px; margin-bottom: 10px;
+            grid-template-columns: repeat(8, 1fr); gap: 10px; max-height: 150px; overflow-y: auto; font-size: 1.6rem; text-align: center;
         }
 
-        /* Feed & Inline Replies */
-        .feed { display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
+        /* Feed & EMBEDDED Replies */
+        .feed { display: flex; flex-direction: column; gap: 12px; padding-bottom: 10px; }
         .post {
-            background: var(--glass); border-radius: 20px; padding: 12px 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s;
-            cursor: pointer; touch-action: pan-x; max-width: 85%; width: fit-content; min-width: 100px;
+            background: var(--glass); border-radius: 18px; padding: 10px 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            cursor: pointer; touch-action: pan-x; max-width: 85%; width: fit-content; min-width: 90px;
         }
-        .post-sent { align-self: flex-end; border-bottom-right-radius: 2px; }
-        .post-received { align-self: flex-start; border-bottom-left-radius: 2px; }
+        .post-sent { align-self: flex-end; background: #9c27b0; color: white; border-bottom-right-radius: 2px; }
+        .post-received { align-self: flex-start; background: #fff; color: var(--dark); border-bottom-left-radius: 2px; }
 
-        .post-header { display: flex; flex-direction: column; font-size: 0.75rem; color: var(--primary); font-weight: bold; margin-bottom: 5px; }
-        
-        /* INLINE Reply Model */
-        .inline-reply-box {
-            background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary);
-            padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem;
-            color: #555;
+        /* Embedded Quote Panel */
+        .post-quote {
+            background: rgba(0,0,0,0.08); border-left: 4px solid var(--primary);
+            padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem;
+            color: inherit; opacity: 0.9;
         }
-        .inline-reply-author { font-weight: bold; display: block; color: var(--primary); margin-bottom: 2px; }
+        .quote-name { font-weight: bold; display: block; filter: brightness(1.2); margin-bottom: 2px; }
+        .quote-msg { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 
-        .post-media { max-width: 100%; border-radius: 12px; margin-top: 10px; }
-        .post-meta { font-size: 0.65rem; color: #888; text-align: right; margin-top: 4px; }
+        .meta { font-size: 0.65rem; opacity: 0.6; text-align: right; margin-top: 5px; }
+        .post-media { max-width: 100%; border-radius: 12px; margin-top: 8px; }
 
-        /* Navigation Sections */
+        /* Sections */
         .section { display: none; }
         .section.active { display: block; }
 
         #video-overlay { background: black; z-index: 2000; display: none; }
         #jitsi-box { width: 100%; height: 100%; }
-        .hangup-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; border-radius: 30px; }
+        .hangup-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; border-radius: 30px; color: white;}
 
         footer { background: var(--dark); color: white; text-align: center; padding: 12px; font-size: 0.75rem; flex-shrink: 0; }
     </style>
@@ -139,13 +136,13 @@
     <div id="identity-screen" class="hidden">
         <div class="login-box">
             <h2>Who are you?</h2>
-            <button onclick="pick('Caleb')">👨 Caleb</button>
-            <button onclick="pick('Caroline')" style="margin-top:10px">👩 Caroline</button>
+            <button onclick="setMe('Caleb')">👨 Caleb</button>
+            <button onclick="setMe('Caroline')" style="margin-top:10px">👩 Caroline</button>
         </div>
     </div>
 
     <div id="video-overlay">
-        <button class="hangup-btn" onclick="hangup()">Hangup 📞</button>
+        <button class="hangup-btn" onclick="hangupNow()">Hangup 📞</button>
         <div id="jitsi-box"></div>
     </div>
 
@@ -153,35 +150,31 @@
         <header>
             <h1>💕 Love</h1>
             <div class="nav-links">
-                <a onclick="go('feed')" id="n-feed" class="active">Home</a>
-                <a onclick="go('gallery')" id="n-gallery">Gallery</a>
-                <a onclick="go('calls')" id="n-calls">Calls</a>
+                <a onclick="go('feed')" id="h-feed" class="active">Home</a>
+                <a onclick="go('gallery')" id="h-gallery">Gallery</a>
+                <a onclick="go('calls')" id="h-calls">Calls</a>
             </div>
             <div class="real-time" id="clock">00:00:00</div>
         </header>
 
-        <main id="scrollWin">
-            <!-- Profile Zone always at top -->
-            <div id="profile-zone" class="profile-container"></div>
-
+        <main id="chatScroll">
+            <div id="profile-area" class="profile-container"></div>
             <div id="feed-sec" class="section active">
-                <div class="feed" id="feedCont"></div>
+                <div class="feed" id="feedHook"></div>
             </div>
-
             <div id="gallery-sec" class="section">
-                <div id="gallCont" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;"></div>
+                <div id="gallHook" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;"></div>
             </div>
-
             <div id="calls-sec" class="section">
-                <div id="callsCont"></div>
+                <div id="callsHook"></div>
             </div>
         </main>
 
-        <div class="create-post" id="composeArea">
+        <div class="composer-wrapper" id="composer">
             <div id="reply-panel">
                 <span id="rep-auth" style="font-weight:bold; color:var(--primary); font-size:0.75rem"></span><br>
                 <span id="rep-msg" style="font-size:0.8rem; color:#666"></span>
-                <span style="float:right; cursor:pointer" onclick="closeRep()">✕</span>
+                <span style="float:right; cursor:pointer" onclick="cancelReply()">✕</span>
             </div>
             <div id="emoji-board"></div>
             <textarea id="txtIn" rows="1" placeholder="Write something sweet..." oninput="pushTyping()"></textarea>
@@ -205,103 +198,94 @@
         const API = 'https://couples-backend-afta.onrender.com';
         let me = '', key = '', callApi = null, isTyping = false, timer, repData = null;
 
-        const emojis = ["❤️","💖","💕","💗","💓","💞","💘","😘","🥰","😍","😊","☺️","💍","💎","🧸","🌹","🌸","🌺","✨","🔥","💑"];
+        const emojis = ["❤️","💖","💕","😘","🥰","😍","😊","☺️","🤩","💍","💎","🧸","🌹","🌸","🌺","✨","🔥","💑","💏"];
 
         function login() {
             if (document.getElementById('pass-in').value === 'MyLove') {
                 key = 'MyLove'; sessionStorage.setItem('key', key);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
-            } else alert('Unauthorized 💕');
+            } else alert('Wrong! 💕');
         }
 
-        function pick(n) {
+        function setMe(n) {
             me = n; sessionStorage.setItem('user', n);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            start();
+            startup();
         }
 
         if (sessionStorage.getItem('user')) {
             me = sessionStorage.getItem('user'); key = sessionStorage.getItem('key');
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            start();
+            startup();
         }
 
-        function start() {
-            drawProfile();
-            getFeed(true);
-            setInterval(() => getFeed(), 8000);
+        function startup() {
+            onProfile();
+            pullFeed(true);
+            setInterval(() => pullFeed(), 8000);
             setInterval(() => ping(isTyping), 3000);
-            setInterval(getStatus, 4000);
+            setInterval(onStatus, 4000);
             setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
         }
 
-        function drawProfile() {
-            const isMeC = me === 'Caleb';
-            const opp = isMeC ? 'Caroline' : 'Caleb';
-            const img = isMeC ? './caroline.png' : './caleb.png';
-            document.getElementById('profile-zone').innerHTML = `
+        function onProfile() {
+            const isMeC = me === 'Caleb'; const opp = isMeC ? 'Caroline' : 'Caleb'; const img = isMeC ? './caroline.png' : './caleb.png';
+            document.getElementById('profile-area').innerHTML = `
                 <div class="profile">
                     <img src="${img}" alt="${opp}">
                     <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
-                        <a onclick="startCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
-                        <a onclick="startCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
+                        <a onclick="makeCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
+                        <a onclick="makeCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
                     </div>
                 </div>`;
         }
 
-        async function startCall(t) {
+        async function makeCall(t) {
             document.getElementById('video-overlay').style.display = 'flex';
-            callApi = new JitsiMeetExternalAPI("meet.jit.si", { roomName: "TheSecretPrivateSpace_V5", parentNode: document.querySelector('#jitsi-box') });
+            callApi = new JitsiMeetExternalAPI("meet.jit.si", { roomName: "OurSafeSpecialRoom_V7", parentNode: document.querySelector('#jitsi-box') });
             await fetch(`${API}/log-call?caller=${me}&type=${t}`, { method: 'POST', headers: auth() });
         }
-        function hangup() { if(callApi) callApi.dispose(); document.getElementById('video-overlay').style.display = 'none'; }
+        function hangupNow() { if(callApi) callApi.dispose(); document.getElementById('video-overlay').style.display = 'none'; }
 
         function auth() { return { 'Authorization': 'Bearer ' + key }; }
 
         async function postText() {
-            const val = document.getElementById('txtIn').value; if (!val.trim()) return;
-            const rpc = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
-            await fetch(`${API}/post?content=${encodeURIComponent(val)}&author=${me}&${rpc}`, { method: 'POST', headers: auth() });
-            document.getElementById('txtIn').value = ''; closeRep(); getFeed(true);
+            const v = document.getElementById('txtIn').value; if (!v.trim()) return;
+            const r = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
+            await fetch(`${API}/post?content=${encodeURIComponent(v)}&author=${me}&${r}`, { method: 'POST', headers: auth() });
+            document.getElementById('txtIn').value = ''; cancelReply(); pullFeed(true);
         }
 
         async function upload() {
-            const f = document.getElementById('fileIn').files[0];
-            const fd = new FormData(); fd.append('author', me); fd.append('content', "📸 Moment"); fd.append('media', f);
+            const f = document.getElementById('fileIn').files[0]; const fd = new FormData(); fd.append('author', me); fd.append('content', "📸 Moment"); fd.append('media', f);
             await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-            getFeed(true);
+            pullFeed(true);
         }
 
-        async function getFeed(scroll = false) {
+        async function pullFeed(scroll = false) {
             const res = await fetch(`${API}/posts`, { headers: auth() });
             const allPosts = await res.json();
-            // Sort to show NEWEST at the BOTTOM
             const posts = allPosts.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-            const cont = document.getElementById('feedCont');
-            cont.innerHTML = posts.map(p => {
+            const hook = document.getElementById('feedHook');
+            hook.innerHTML = posts.map(p => {
                 const isSent = p.author === me;
-                let reply = p.reply_to_content ? `<div class="inline-reply-box"><span class="inline-reply-author">${p.reply_to_author} ❤️</span>${p.reply_to_content}</div>` : '';
+                let reply = p.reply_to_content ? `<div class="post-quote"><span class="quote-name">${p.reply_to_author} ❤️</span><span class="quote-msg">${p.reply_to_content}</span></div>` : '';
                 let media = p.image_url ? `<img src="${API}${p.image_url}" class="post-media" onclick="window.open('${API}${p.image_url}')">` : '';
                 return `
                 <div class="post ${isSent ? 'post-sent':'post-received'}" 
                      onmousedown="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" 
                      ontouchstart="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
-                    <div class="post-header">${p.author}</div>
                     ${reply}
                     <div>${p.content}</div>
                     ${media}
-                    <div class="post-meta">${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                    <div class="meta">${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
                 </div>`;
             }).join('');
-            // Auto-scroll to the bottom
-            const win = document.getElementById('scrollWin');
-            if (scroll || (win.scrollHeight - win.scrollTop - win.clientHeight < 100)) {
-                win.scrollTop = win.scrollHeight;
-            }
+            if (scroll) { const win = document.getElementById('chatScroll'); win.scrollTop = win.scrollHeight; }
         }
 
         function onSwipe(e, a, c) {
@@ -313,22 +297,18 @@
         }
 
         function setRep(a, c) {
-            repData = { author: a, content: c };
-            document.getElementById('reply-panel').style.display = 'block';
-            document.getElementById('rep-auth').innerText = a;
-            document.getElementById('rep-msg').innerText = c;
+            repData = { author: a, content: c }; document.getElementById('reply-panel').style.display = 'block';
+            document.getElementById('rep-auth').innerText = a; document.getElementById('rep-msg').innerText = c;
             document.getElementById('txtIn').focus();
         }
-        function closeRep() { repData = null; document.getElementById('reply-panel').style.display = 'none'; }
+        function cancelReply() { repData = null; document.getElementById('reply-panel').style.display = 'none'; }
         
         function pushTyping() { if (!isTyping) { isTyping = true; ping(true); } clearTimeout(timer); timer = setTimeout(() => { isTyping = false; ping(false); }, 4000); }
         async function ping(t) { await fetch(`${API}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
         
-        async function getStatus() {
-            const res = await fetch(`${API}/status`, { headers: auth() });
-            const d = await res.json();
-            const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
-            const el = document.getElementById(`st-${opp}`);
+        async function onStatus() {
+            const res = await fetch(`${API}/status`, { headers: auth() }); const d = await res.json();
+            const opp = me === 'Caleb' ? 'Caroline' : 'Caleb'; const el = document.getElementById(`st-${opp}`);
             if (el) {
                 if (d.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "var(--primary)"; }
                 else if (d[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#22c55e"; }
@@ -340,8 +320,8 @@
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(`${s}-sec`).classList.add('active');
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            document.getElementById(`n-${s}`).classList.add('active');
-            document.getElementById('composeArea').style.display = (s === 'feed') ? 'block' : 'none';
+            document.getElementById(`h-${s}`).classList.add('active');
+            document.getElementById('composer').style.display = (s === 'feed') ? 'block' : 'none';
         }
 
         function toggleEmoji() {
@@ -363,7 +343,7 @@
                     const bl = new Blob(chunks, { type: 'audio/webm' });
                     const fd = new FormData(); fd.append('author', me); fd.append('content', "🎤 Voice"); fd.append('media', bl, "v.webm");
                     await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-                    getFeed(true);
+                    pullFeed(true);
                 };
             }
         }
