@@ -244,7 +244,7 @@
 
         .profile {
             background: var(--glass);
-            padding: 15px;
+            padding: 25px 20px;
             border-radius: 20px;
             position: relative;
             width: 100%;
@@ -272,12 +272,10 @@
         }
 
         .quick-call-actions {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
-            gap: 15px;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .call-icon {
@@ -1069,7 +1067,7 @@
             document.getElementById('profile-zone').innerHTML = `
                 <div class="profile">
                     <img src="${oppImg}" alt="${oppNick}">
-                    <h3 style="margin-top:10px; font-size: 1.2rem;">${oppNick}</h3>
+                    <h3 style="margin-top:20px; font-size: 1.4rem; color: #333; font-weight: 800;">${oppNick}</h3>
                     <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
                         <a onclick="runCall('Audio')" class="call-icon" style="color:#2563eb" title="Audio call">
