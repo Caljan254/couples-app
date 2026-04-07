@@ -10,6 +10,8 @@
     <meta name="theme-color" content="#fd2f56">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Jitsi Meet API -->
+    <script src='https://meet.jit.si/external_api.js'></script>
     <style>
         :root {
             --primary: #fd2f56;
@@ -71,16 +73,6 @@
             font-size: 2em;
         }
 
-        .login-box input {
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid var(--primary);
-            font-size: 16px;
-            width: 80%;
-            margin-bottom: 20px;
-            outline: none;
-        }
-
         .login-box button, .identity-btn {
             background: var(--primary);
             color: white;
@@ -94,8 +86,14 @@
             margin: 10px;
         }
 
-        .login-box button:hover, .identity-btn:hover {
-            transform: scale(1.05);
+        .login-box input {
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            font-size: 16px;
+            width: 80%;
+            margin-bottom: 20px;
+            outline: none;
         }
 
         /* App Layout */
@@ -105,7 +103,6 @@
             min-height: 100vh;
         }
 
-        /* Header */
         header {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -119,52 +116,27 @@
             z-index: 100;
         }
 
-        header h1 {
-            color: var(--primary);
-            font-size: 1.5em;
-        }
+        header h1 { color: var(--primary); font-size: 1.5em; }
 
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; cursor: pointer; }
+        .nav-links a:hover { color: var(--primary); }
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 600;
-            cursor: pointer;
-        }
+        .real-time { font-size: 1.1em; font-weight: bold; color: var(--primary); }
 
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .real-time {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        /* Main Content */
         main {
             flex: 1;
-            padding: 40px 20px;
+            padding: 20px;
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
         }
 
-        /* Profile Layout */
-        .profile-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
+        .profile-container { display: flex; justify-content: center; margin-bottom: 20px; }
+        
         .profile {
             background: var(--glass);
-            padding: 25px;
+            padding: 20px;
             border-radius: 20px;
             text-align: center;
             width: 100%;
@@ -181,7 +153,6 @@
             object-fit: contain;
             background: rgba(255,255,255,0.2);
             border: 5px solid var(--primary);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .status-indicator {
@@ -218,156 +189,132 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             text-decoration: none;
             cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .call-icon:hover { transform: scale(1.1); }
         .icon-video { color: #fd2f56; }
         .icon-phone { color: #25D366; }
 
-        /* Create Post Area */
+        /* Video Call Overlay */
+        #video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        #jitsi-container { flex: 1; width: 100%; height: 100%; }
+
+        .close-video-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 2100;
+            cursor: pointer;
+        }
+
         .create-post {
             background: var(--glass);
             border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         textarea {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             border: 1px solid #ddd;
-            font-family: inherit;
-            resize: vertical;
             margin-bottom: 15px;
             font-size: 16px;
         }
 
-        .media-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
         .action-btn {
-            padding: 12px 20px;
+            padding: 10px 20px;
             border: none;
             border-radius: 10px;
             background: var(--primary);
             color: white;
-            cursor: pointer;
             font-weight: bold;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            cursor: pointer;
         }
 
-        .action-btn.secondary { background: #ff758c; }
-        input[type="file"] { display: none; }
+        .action-btn.secondary { background: #ff758c; margin-left:10px; }
 
-        /* Feed */
-        .feed { display: flex; flex-direction: column; gap: 20px; }
-        
+        .feed { display: flex; flex-direction: column; gap: 15px; }
+
         .post {
             background: var(--glass);
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-            cursor: pointer;
         }
 
         .post-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            color: #555;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
         }
 
-        .post-author { font-weight: bold; color: var(--primary); font-size: 1.1em; }
-        .post-content { font-size: 1.1em; line-height: 1.5; margin-bottom: 10px; }
-        .post-media { max-width: 100%; border-radius: 15px; margin-bottom: 10px; }
-        .post-video, .post-audio { width: 100%; border-radius: 10px; margin-bottom: 10px; outline: none; }
+        .post-author { font-weight: bold; color: var(--primary); }
 
-        /* Gallery Section */
+        .post-media { max-width: 100%; border-radius: 10px; }
+
         #gallery-section {
             display: none;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
-            padding: 20px 0;
         }
 
         .gallery-item {
             width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 15px;
+            aspect-ratio: 1;
+            border-radius: 10px;
             object-fit: cover;
-            cursor: pointer;
             box-shadow: 0 5px 10px rgba(0,0,0,0.1);
         }
 
-        /* Reply Preview Box */
-        #reply-preview {
-            display: none;
-            background: rgba(0,0,0,0.05);
-            border-left: 4px solid var(--primary);
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            position: relative;
-        }
-
-        .close-reply {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: auto;
-        }
-
-        @media (max-width: 768px) {
-            header { flex-direction: column; text-align: center; padding: 15px;}
-            .nav-links { margin-top: 10px; }
-        }
+        footer { background: var(--dark); color: white; text-align: center; padding: 20px; margin-top: auto; }
     </style>
 </head>
 
 <body>
 
-    <!-- Login Screen -->
     <div id="login-screen">
         <div class="login-box">
             <h2>Welcome, Love 💕</h2>
-            <p style="margin-bottom: 15px;">Please enter our secret password</p>
             <input type="password" id="passwordId" placeholder="Password...">
             <br>
             <button onclick="checkPassword()">Enter</button>
         </div>
     </div>
 
-    <!-- Identity Selection -->
     <div id="identity-screen" class="hidden">
         <div class="login-box">
             <h2>Who are you? 💕</h2>
-            <button class="identity-btn" onclick="selectIdentity('Caleb')">👨 I am Caleb</button>
-            <button class="identity-btn" onclick="selectIdentity('Caroline')">👩 I am Caroline</button>
+            <button class="identity-btn" onclick="selectIdentity('Caleb')">👨 Caleb</button>
+            <button class="identity-btn" onclick="selectIdentity('Caroline')">👩 Caroline</button>
         </div>
     </div>
 
-    <!-- Main App -->
+    <div id="video-overlay">
+        <button class="close-video-btn" onclick="closeVideoCall()">Close Call</button>
+        <div id="jitsi-container"></div>
+    </div>
+
     <div id="app">
         <header>
             <h1>💕 Our Space</h1>
@@ -378,51 +325,35 @@
             <div class="real-time" id="clock">00:00:00</div>
         </header>
 
-        <main id="main-content">
+        <main>
             <div id="profile-area" class="profile-container"></div>
 
             <div id="feed-section">
-                <!-- Create Post -->
                 <div class="create-post">
-                    <div id="reply-preview">
-                        <span id="reply-text"></span>
-                        <span class="close-reply" onclick="cancelReply()">✕</span>
-                    </div>
                     <textarea id="postContent" rows="3" placeholder="Write to your love..." oninput="handleTyping()"></textarea>
-                    
-                    <div class="media-actions">
-                        <button class="action-btn" onclick="createTextPost()">📝 Post</button>
-                        <button class="action-btn secondary" onclick="document.getElementById('mediaInput').click()">📷 Media</button>
-                        <button class="action-btn secondary" id="recordBtn" onclick="toggleAudioRecording()">🎙️ Audio</button>
-                    </div>
+                    <button class="action-btn" onclick="createTextPost()">📝 Post</button>
+                    <button class="action-btn secondary" onclick="document.getElementById('mediaInput').click()">📷 Media</button>
+                    <button class="action-btn secondary" id="recordBtn" onclick="toggleAudioRecording()">🎙️ Audio</button>
                     <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" onchange="uploadMedia()">
                 </div>
-
-                <div class="feed" id="postsContainer">
-                    <div style="text-align:center; padding: 20px;">Loading our memories... 💕</div>
-                </div>
+                <div class="feed" id="postsContainer"></div>
             </div>
 
             <div id="gallery-section"></div>
         </main>
 
-        <footer>
-            <p>Built with ❤️ by Caleb & Caroline</p>
-        </footer>
+        <footer>Built with ❤️ for Caleb & Caroline</footer>
     </div>
 
     <script>
         const API_URL = 'https://couples-backend-afta.onrender.com';
         let currentAuthor = '';
-        let replyToId = null;
-        let isUserTyping = false;
-        let typingTimeout;
+        let api = null; // Jitsi API instance
 
         function checkPassword() {
-            const pwd = document.getElementById('passwordId').value;
-            if (pwd === 'MyLove') {
+            if (document.getElementById('passwordId').value === 'MyLove') {
                 sessionStorage.setItem('authenticated', 'true');
-                sessionStorage.setItem('password', pwd);
+                sessionStorage.setItem('password', 'MyLove');
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
             } else { alert('Wrong password! 💕'); }
@@ -433,178 +364,128 @@
             sessionStorage.setItem('userName', name);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            setupProfile();
-            loadPosts();
-            startPolling();
+            setupApp();
         }
 
         if (sessionStorage.getItem('userName')) {
             currentAuthor = sessionStorage.getItem('userName');
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
+            setupApp();
+        }
+
+        function setupApp() {
             setupProfile();
             loadPosts();
-            startPolling();
+            setInterval(loadPosts, 10000);
+            setInterval(fetchStatus, 3000);
+            setInterval(() => {
+                document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+            }, 1000);
         }
 
         function setupProfile() {
-            const profileArea = document.getElementById('profile-area');
             const isCaleb = currentAuthor === 'Caleb';
-            const opponentName = isCaleb ? 'Caroline' : 'Caleb';
-            const opponentImg = isCaleb ? './caroline.png' : './caleb.png';
-            const opponentPhone = isCaleb ? '+254704229334' : '+254112199055';
+            const opp = isCaleb ? 'Caroline' : 'Caleb';
+            const oppImg = isCaleb ? './caroline.png' : './caleb.png';
+            const oppPhone = isCaleb ? '+254704229334' : '+254112199055';
 
-            profileArea.innerHTML = `
-                <div class="profile" style="position: relative;">
-                    <img src="${opponentImg}" alt="${opponentName}">
-                    <div id="status-${opponentName}" class="status-indicator">Offline ⚪</div>
+            document.getElementById('profile-area').innerHTML = `
+                <div class="profile">
+                    <img src="${oppImg}" alt="${opp}">
+                    <div id="status-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
-                        <a href="tel:${opponentPhone}" class="call-icon icon-phone" title="Call"><i class="fas fa-phone"></i></a>
-                        <a href="https://wa.me/${opponentPhone.replace('+','')}" target="_blank" class="call-icon icon-video" title="Video Call"><i class="fas fa-video"></i></a>
+                        <a href="tel:${oppPhone}" class="call-icon icon-phone"><i class="fas fa-phone"></i></a>
+                        <a onclick="startVideoCall()" class="call-icon icon-video"><i class="fas fa-video"></i></a>
                     </div>
                 </div>
             `;
         }
 
-        function handleTyping() {
-            if (!isUserTyping) {
-                isUserTyping = true;
-                sendPing(true);
-            }
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                isUserTyping = false;
-                sendPing(false);
-            }, 3000);
+        function startVideoCall() {
+            document.getElementById('video-overlay').style.display = 'flex';
+            const domain = "meet.jit.si";
+            const options = {
+                roomName: "OurPrivateLoveSpace_CalebCaroline_2024",
+                width: "100%",
+                height: "100%",
+                parentNode: document.querySelector('#jitsi-container'),
+                userInfo: { displayName: currentAuthor },
+                interfaceConfigOverwrite: {
+                    TOOLBAR_BUTTONS: ['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen', 'fittowindow', 'hangup', 'profile', 'chat', 'settings', 'videoquality', 'filmstrip', 'feedback', 'stats', 'shortcuts', 'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'],
+                }
+            };
+            api = new JitsiMeetExternalAPI(domain, options);
         }
 
-        async function sendPing(typing = false) {
-            try {
-                await fetch(`${API_URL}/ping?author=${currentAuthor}&typing=${typing}`, { 
-                    method: 'POST', 
-                    headers: getAuthHeaders() 
-                });
-            } catch (e) {}
+        function closeVideoCall() {
+            if (api) { api.dispose(); api = null; }
+            document.getElementById('video-overlay').style.display = 'none';
         }
-
-        function showSection(section) {
-            if (section === 'gallery') {
-                document.getElementById('feed-section').style.display = 'none';
-                document.getElementById('gallery-section').style.display = 'grid';
-                loadGallery();
-            } else {
-                document.getElementById('feed-section').style.display = 'block';
-                document.getElementById('gallery-section').style.display = 'none';
-            }
-        }
-
-        function updateClock() {
-            const timeString = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('clock').innerText = timeString;
-        }
-        setInterval(updateClock, 1000);
 
         function getAuthHeaders() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('password') }; }
 
         async function createTextPost() {
-            let content = document.getElementById('postContent').value;
-            if (!content.trim()) return alert('Please write something!');
-            if (replyToId) content = `↪️ Replied: ${content}`;
-            
-            const res = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
+            const content = document.getElementById('postContent').value;
+            if (!content.trim()) return;
+            await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
                 method: 'POST', headers: getAuthHeaders()
             });
-            if (res.ok) {
-                document.getElementById('postContent').value = '';
-                cancelReply();
-                loadPosts();
-            }
+            document.getElementById('postContent').value = '';
+            loadPosts();
         }
 
         async function loadPosts() {
             const res = await fetch(`${API_URL}/posts`, { headers: getAuthHeaders() });
             const posts = await res.json();
-            const container = document.getElementById('postsContainer');
-            container.innerHTML = posts.map(post => {
-                let mediaHtml = '';
-                if (post.image_url) {
-                    const url = `${API_URL}${post.image_url}`;
-                    if (post.media_type === 'video') mediaHtml = `<video src="${url}" class="post-video" controls></video>`;
-                    else if (post.media_type === 'audio') mediaHtml = `<audio src="${url}" class="post-audio" controls></audio>`;
-                    else mediaHtml = `<img src="${url}" class="post-media">`;
-                }
-                return `
-                <div class="post" onmousedown="touchStart(event, '${post.id}', '${post.content.substring(0,30)}')" onmouseup="touchEnd(event)">
+            document.getElementById('postsContainer').innerHTML = posts.map(p => `
+                <div class="post">
                     <div class="post-header">
-                        <span class="post-author">${post.author === 'Caleb' ? '👨 Caleb' : '👩 Caroline'}</span>
-                        <span>${new Date(post.timestamp).toLocaleString()}</span>
+                        <span class="post-author">${p.author}</span>
+                        <span>${new Date(p.timestamp).toLocaleTimeString()}</span>
                     </div>
-                    <div class="post-content">${post.content}</div>
-                    ${mediaHtml}
-                </div>`;
-            }).join('');
+                    <div>${p.content}</div>
+                    ${p.image_url ? `<img src="${API_URL}${p.image_url}" class="post-media">` : ''}
+                </div>
+            `).join('');
         }
 
         async function uploadMedia() {
             const file = document.getElementById('mediaInput').files[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append('author', currentAuthor);
-            formData.append('content', "Shared a moment! ❤️");
-            formData.append('media', file);
-            await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: getAuthHeaders(), body: formData });
-            loadPosts();
-        }
-
-        // --- Audio Logic ---
-        let mediaRecorder; let audioChunks = [];
-        async function toggleAudioRecording() {
-            const btn = document.getElementById('recordBtn');
-            if (btn.innerHTML.includes('🎙️')) {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                btn.innerHTML = '🛑 Stop';
-                btn.style.background = 'red';
-                audioChunks = [];
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
-                    uploadVoice(blob);
-                    btn.innerHTML = '🎙️ Audio';
-                    btn.style.background = 'var(--secondary)';
-                };
-            } else { mediaRecorder.stop(); }
-        }
-        async function uploadVoice(blob) {
             const fd = new FormData();
-            fd.append('author', currentAuthor); fd.append('content', "Voice message 🎤"); fd.append('media', blob, "voice.webm");
+            fd.append('author', currentAuthor); fd.append('content', "Shared a moment! ❤️"); fd.append('media', file);
             await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: getAuthHeaders(), body: fd });
             loadPosts();
         }
 
+        let isTyping = false;
+        function handleTyping() { if (!isTyping) { isTyping = true; sendPing(true); setTimeout(() => { isTyping = false; sendPing(false); }, 3000); } }
+
+        async function sendPing(typing = false) {
+            await fetch(`${API_URL}/ping?author=${currentAuthor}&typing=${typing}`, { method: 'POST', headers: getAuthHeaders() });
+        }
+
         async function fetchStatus() {
-            sendPing(isUserTyping);
             const res = await fetch(`${API_URL}/status`, { headers: getAuthHeaders() });
             const data = await res.json();
-            const other = currentAuthor === 'Caleb' ? 'Caroline' : 'Caleb';
-            const el = document.getElementById(`status-${other}`);
+            const opp = currentAuthor === 'Caleb' ? 'Caroline' : 'Caleb';
+            const el = document.getElementById(`status-${opp}`);
             if (el) {
-                if (data.typing && data.typing[other]) { el.innerHTML = 'Typing... ✍️'; el.style.color = 'var(--primary)'; }
-                else if (data[other]) { el.innerHTML = 'Ready 🟢'; el.style.color = '#25D366'; }
+                if (data.typing && data.typing[opp]) { el.innerHTML = 'Typing... ✍️'; el.style.color = '#fd2f56'; }
+                else if (data[opp]) { el.innerHTML = 'Ready 🟢'; el.style.color = '#25D366'; }
                 else { el.innerHTML = 'Offline ⚪'; el.style.color = '#888'; }
             }
         }
 
-        let startX = 0;
-        function touchStart(e, id, text) { startX = e.clientX || e.touches[0].clientX; }
-        function touchEnd(e) { 
-            const endX = e.clientX || e.changedTouches[0].clientX;
-            // Removed reply logic for simplicity unless requested
+        function showSection(s) {
+            document.getElementById('feed-section').style.display = s === 'feed' ? 'block' : 'none';
+            document.getElementById('gallery-section').style.display = s === 'gallery' ? 'grid' : 'none';
+            if (s === 'gallery') {
+                fetch(`${API_URL}/posts`, { headers: getAuthHeaders() }).then(r => r.json()).then(ps => {
+                    document.getElementById('gallery-section').innerHTML = ps.filter(p => p.image_url).map(p => `<img src="${API_URL}${p.image_url}" class="gallery-item">`).join('');
+                });
+            }
         }
-        function cancelReply() { replyToId = null; document.getElementById('reply-preview').style.display = 'none'; }
-
-        function startPolling() { setInterval(loadPosts, 10000); setInterval(fetchStatus, 3000); }
     </script>
 </body>
 </html>
