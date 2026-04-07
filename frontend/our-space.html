@@ -235,9 +235,19 @@
     </div>
 
     <script>
-        // IMPORTANT: Change this to your Render backend URL after deployment
+        // IMPORTANT: Change this to your Render backend URL
         const API_URL = 'https://couples-backend-afta.onrender.com';
         let currentAuthor = 'you';
+
+        // Add authentication token
+        const AUTH_TOKEN = 'MyLove';
+
+        function getAuthHeaders() {
+            return {
+                'Authorization': 'Bearer ' + AUTH_TOKEN,
+                'Content-Type': 'application/json'
+            };
+        }
 
         function setAuthor(author) {
             currentAuthor = author;
@@ -256,12 +266,15 @@
 
             try {
                 const response = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: getAuthHeaders()
                 });
 
                 if (response.ok) {
                     document.getElementById('postContent').value = '';
                     loadPosts();
+                } else if (response.status === 401) {
+                    alert('Authentication failed. Please check your token.');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -283,6 +296,9 @@
             try {
                 const response = await fetch(`${API_URL}/upload-photo`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + AUTH_TOKEN
+                    },
                     body: formData
                 });
 
@@ -290,6 +306,8 @@
                     document.getElementById('postContent').value = '';
                     document.getElementById('photoInput').value = '';
                     loadPosts();
+                } else if (response.status === 401) {
+                    alert('Authentication failed. Please check your token.');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -299,8 +317,13 @@
 
         async function addHeart(postId) {
             try {
-                await fetch(`${API_URL}/heart/${postId}`, { method: 'POST' });
-                loadPosts();
+                const response = await fetch(`${API_URL}/heart/${postId}`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                if (response.ok) {
+                    loadPosts();
+                }
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -313,11 +336,14 @@
             if (!comment.trim()) return;
 
             try {
-                await fetch(`${API_URL}/comment/${postId}?author=${currentAuthor}&comment=${encodeURIComponent(comment)}`, {
-                    method: 'POST'
+                const response = await fetch(`${API_URL}/comment/${postId}?author=${currentAuthor}&comment=${encodeURIComponent(comment)}`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
                 });
-                commentInput.value = '';
-                loadPosts();
+                if (response.ok) {
+                    commentInput.value = '';
+                    loadPosts();
+                }
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -334,7 +360,20 @@
 
         async function loadPosts() {
             try {
-                const response = await fetch(`${API_URL}/posts`);
+                const response = await fetch(`${API_URL}/posts`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    document.getElementById('postsContainer').innerHTML = `
+                    <div class="loading">
+                        ❌ Authentication failed.<br>
+                        Please check your token.
+                    </div>
+                `;
+                    return;
+                }
+
                 const posts = await response.json();
 
                 const container = document.getElementById('postsContainer');
@@ -345,44 +384,44 @@
                 }
 
                 container.innerHTML = posts.map(post => `
-                    <div class="post">
-                        <div class="post-header">
-                            <span class="author">${post.author === 'you' ? '💙 You' : post.author === 'loved one' ? '💖 Loved One' : post.author}</span>
-                            <span class="timestamp">${new Date(post.timestamp).toLocaleString()}</span>
-                        </div>
-                        <div class="post-content">${escapeHtml(post.content)}</div>
-                        ${post.image_url ? `<img src="${API_URL}${post.image_url}" class="post-image" alt="Shared photo">` : ''}
-                        <div class="post-stats">
-                            <button class="heart-btn" onclick="addHeart('${post.id}')">
-                                ❤️ <span class="heart-count">${post.hearts}</span>
-                            </button>
-                            <button class="comment-toggle" onclick="toggleComments('${post.id}')">
-                                💬 ${post.comments.length} comments
-                            </button>
-                        </div>
-                        <div class="comments-section" id="comments-${post.id}" style="display: none;">
-                            ${post.comments.map(comment => `
-                                <div class="comment">
-                                    <div class="comment-author">${comment.author === 'you' ? '💙 You' : comment.author === 'loved one' ? '💖 Loved One' : comment.author}</div>
-                                    <div class="comment-text">${escapeHtml(comment.comment)}</div>
-                                    <div class="timestamp" style="font-size: 10px;">${new Date(comment.timestamp).toLocaleString()}</div>
-                                </div>
-                            `).join('')}
-                            <div class="add-comment">
-                                <input type="text" id="comment-${post.id}" class="comment-input" placeholder="Write a reply... 💕">
-                                <button class="comment-submit" onclick="addComment('${post.id}')">Send</button>
+                <div class="post">
+                    <div class="post-header">
+                        <span class="author">${post.author === 'you' ? '💙 You' : post.author === 'loved one' ? '💖 Loved One' : post.author}</span>
+                        <span class="timestamp">${new Date(post.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="post-content">${escapeHtml(post.content)}</div>
+                    ${post.image_url ? `<img src="${API_URL}${post.image_url}" class="post-image" alt="Shared photo">` : ''}
+                    <div class="post-stats">
+                        <button class="heart-btn" onclick="addHeart('${post.id}')">
+                            ❤️ <span class="heart-count">${post.hearts}</span>
+                        </button>
+                        <button class="comment-toggle" onclick="toggleComments('${post.id}')">
+                            💬 ${post.comments.length} comments
+                        </button>
+                    </div>
+                    <div class="comments-section" id="comments-${post.id}" style="display: none;">
+                        ${post.comments.map(comment => `
+                            <div class="comment">
+                                <div class="comment-author">${comment.author === 'you' ? '💙 You' : comment.author === 'loved one' ? '💖 Loved One' : comment.author}</div>
+                                <div class="comment-text">${escapeHtml(comment.comment)}</div>
+                                <div class="timestamp" style="font-size: 10px;">${new Date(comment.timestamp).toLocaleString()}</div>
                             </div>
+                        `).join('')}
+                        <div class="add-comment">
+                            <input type="text" id="comment-${post.id}" class="comment-input" placeholder="Write a reply... 💕">
+                            <button class="comment-submit" onclick="addComment('${post.id}')">Send</button>
                         </div>
                     </div>
-                `).join('');
+                </div>
+            `).join('');
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('postsContainer').innerHTML = `
-                    <div class="loading">
-                        ❌ Cannot connect to server.<br>
-                        Make sure the backend is running at ${API_URL}
-                    </div>
-                `;
+                <div class="loading">
+                    ❌ Cannot connect to server.<br>
+                    Make sure the backend is running at ${API_URL}
+                </div>
+            `;
             }
         }
 
