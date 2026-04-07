@@ -520,15 +520,46 @@
             opacity: 1;
         }
 
-        /* Message avatar */
+        /* Message avatar — object-position:top keeps head/face visible */
         .msg-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+            object-position: top center;
+            flex-shrink: 0;
+            align-self: flex-end;
+        }
+
+        /* ── Desktop hover reply button ── */
+        .reply-btn {
+            display: none; /* hidden by default, shown on hover */
+            align-items: center;
+            justify-content: center;
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            border: 1.5px solid var(--primary);
-            object-fit: cover;
+            border: none;
+            background: rgba(253, 47, 86, 0.12);
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.75rem;
             flex-shrink: 0;
-            align-self: flex-end;
+            align-self: center;
+            transition: background .15s, transform .15s;
+            margin: 0 4px;
+        }
+        .reply-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        /* Show reply button on row hover (desktop only) */
+        @media (hover: hover) {
+            .msg-row:hover .reply-btn {
+                display: flex;
+            }
         }
 
         /* Highlight flash when scrolled-to */
@@ -1061,6 +1092,19 @@
                 .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
+        // Safe attribute escaping (for data-* attributes)
+        function escAttr(str) {
+            return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // Delegated reply-btn click handler (reads data-* attributes safely)
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.reply-btn');
+            if (btn) {
+                setRep(btn.dataset.author, btn.dataset.content);
+            }
+        });
+
         /* ─── LOAD FEED ──────────────────────────────── */
         async function loadFeed(toBeBottom = false) {
             if (!me) return;
@@ -1140,6 +1184,12 @@
                                 </div>
                             </div>
                         </div>
+                        <button class="reply-btn"
+                            data-author="${escAttr(p.author)}"
+                            data-content="${escAttr(p.content)}"
+                            title="Reply to this message">
+                            <i class="fas fa-reply"></i>
+                        </button>
                         ${isSent ? `<img src="${avatar}" class="msg-avatar" alt="${me}">` : ''}
                     </div>`;
             });
@@ -1240,9 +1290,10 @@
 
         /* ─── REPLY STATE ────────────────────────────── */
         function setRep(author, content) {
-            repData = { author, content };
-            document.getElementById('rep-auth').textContent = author;
-            document.getElementById('rep-msg').textContent = content;
+            // trim any accidental leading/trailing whitespace from inline template
+            repData = { author: author.trim(), content: content.trim() };
+            document.getElementById('rep-auth').textContent = repData.author;
+            document.getElementById('rep-msg').textContent  = repData.content;
             document.getElementById('reply-panel').style.display = 'block';
             document.getElementById('txtIn').focus();
         }
