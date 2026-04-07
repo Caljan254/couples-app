@@ -69,26 +69,39 @@ def create_post(content: str, author: str):
     posts.append(new_post)
     return new_post
 
-@app.post("/upload-photo")
-async def upload_photo(author: str, content: str, photo: UploadFile = File(...)):
-    file_extension = photo.filename.split(".")[-1]
+@app.post("/upload-media")
+async def upload_media(author: str, content: str, media: UploadFile = File(...)):
+    file_extension = media.filename.split(".")[-1]
     filename = f"{uuid.uuid4()}.{file_extension}"
     filepath = f"photos/{filename}"
     
     with open(filepath, "wb") as f:
-        f.write(await photo.read())
+        f.write(await media.read())
     
+    # Determine media type roughly by extension
+    media_type = "image"
+    if file_extension.lower() in ['mp4', 'webm', 'ogg']:
+        media_type = "video"
+    elif file_extension.lower() in ['mp3', 'wav', 'm4a', 'aac', 'weba']:
+        media_type = "audio"
+        
     new_post = Post(
         id=str(uuid.uuid4()),
         author=author,
         content=content,
-        image_url=f"/photos/{filename}",
+        image_url=f"/photos/{filename}",  # Keeping field name for backwards compatibility, but we use it for all media
         timestamp=datetime.now().isoformat(),
         hearts=0,
         comments=[]
     )
+    # Monkey-patching the post for the frontend (the frontend will rely on media_type if we pass it, let's add it to Post)
+    setattr(new_post, 'media_type', media_type)
     posts.append(new_post)
-    return new_post
+    
+    # Return dict with media_type included
+    post_dict = new_post.dict()
+    post_dict['media_type'] = media_type
+    return post_dict
 
 @app.post("/heart/{post_id}")
 def add_heart(post_id: str):
@@ -111,8 +124,8 @@ def add_comment(post_id: str, author: str, comment: str):
     raise HTTPException(status_code=404, detail="Post not found")
 
 @app.get("/photos/{filename}")
-def get_photo(filename: str):
+def get_media(filename: str):
     filepath = f"photos/{filename}"
     if os.path.exists(filepath):
         return FileResponse(filepath)
-    raise HTTPException(status_code=404, detail="Photo not found")
+    raise HTTPException(status_code=404, detail="Media not found")
