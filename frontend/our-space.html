@@ -18,8 +18,7 @@
             --secondary: #ff758c;
             --dark: #1e1e24;
             --light: #fff5f7;
-            --glass: rgba(255, 255, 255, 0.85);
-            --bubble-purple: #7b1fa2; /* Matching the purple bubble from screenshot */
+            --glass: rgba(255, 255, 255, 0.95);
             --bubble-sent: #9c27b0;
             --bubble-received: #414141;
         }
@@ -29,9 +28,10 @@
         body {
             font-family: 'Outfit', sans-serif;
             background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
-            min-height: 100vh;
-            color: var(--dark);
-            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         /* Screens */
@@ -51,86 +51,74 @@
         input { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--primary); margin: 15px 0; outline: none; }
         button, .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; margin: 5px; }
 
-        /* App Layout */
-        #app { display: none; flex-direction: column; min-height: 100vh; }
-
+        /* HEADER */
         header {
-            background: white; padding: 10px 20px;
+            background: white; padding: 5px 15px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky; top: 0; z-index: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 500;
+            flex-shrink: 0;
+            height: 50px;
         }
-        header h1 { font-size: 1.3rem; color: var(--primary); }
-        .nav-links { display: flex; gap: 15px; }
-        .nav-links a { text-decoration: none; color: #555; font-weight: 600; cursor: pointer; }
+        header h1 { font-size: 1rem; color: var(--primary); }
+        .nav-links { display: flex; gap: 12px; }
+        .nav-links a { text-decoration: none; color: #666; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
         .nav-links a.active { color: var(--primary); }
-        .real-time { font-size: 1rem; font-weight: bold; color: var(--primary); }
+        .real-time { font-size: 0.8rem; font-weight: bold; color: var(--primary); }
 
-        main { flex: 1; padding: 20px; width: 100%; max-width: 700px; margin: 0 auto; padding-bottom: 120px;}
+        /* SCROLLABLE CHAT FEED */
+        #app { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        main { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; width: 100%; max-width: 700px; margin: 0 auto; scroll-behavior: smooth;}
+        .feed { display: flex; flex-direction: column; gap: 8px; }
 
-        /* Profile Area */
-        .profile-container { display: flex; justify-content: center; margin-bottom: 25px; }
-        .profile {
-            background: var(--glass); padding: 20px; border-radius: 20px; position: relative;
-            width: 100%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .profile img { width: 100%; max-width: 250px; border-radius: 20px; object-fit: contain; border: 4px solid var(--primary); }
-        .status-indicator { position: absolute; top: 10px; right: 10px; padding: 5px 12px; background: white; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
-        .quick-call-actions { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-        .call-icon { width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        /* Profile Banner in Chat */
+        .partner-head { text-align: center; margin-bottom: 20px; }
+        .partner-img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); object-fit: contain; }
+        .partner-st { font-size: 0.7rem; display: block; color: #fff; margin-top: 3px; font-weight: bold;}
 
-        /* Create Post */
-        .create-post { background: var(--glass); border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        #reply-panel { 
-            background: rgba(0,0,0,0.05); border-left: 5px solid white; padding: 10px; 
-            margin-bottom: 15px; border-radius: 8px; display: none;
-            position: relative;
-        }
-        textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; margin-bottom: 10px; }
-
-        /* Custom Emoji Board */
-        #emoji-board {
-            display: none; background: white; border-radius: 12px; padding: 10px;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.1); margin-bottom: 10px;
-            display: none; grid-template-columns: repeat(8, 1fr); gap: 10px;
-            max-height: 180px; overflow-y: auto; font-size: 1.6rem;
-        }
-
-        /* Feed & EXACT WhatsApp Reply Model */
-        .feed { display: flex; flex-direction: column; gap: 12px; }
+        /* BUBBLES */
         .post {
-            border-radius: 15px; padding: 10px 15px;
-            max-width: 85%; width: fit-content; min-width: 120px;
+            border-radius: 15px; padding: 8px 12px;
+            max-width: 85%; width: fit-content; min-width: 80px;
             position: relative; transition: transform 0.2s;
             cursor: pointer; touch-action: pan-y;
-            color: white; font-size: 0.95rem; line-height: 1.4;
+            color: white; font-size: 0.95rem;
         }
         .post-sent { align-self: flex-end; background: var(--bubble-sent); border-bottom-right-radius: 2px; }
         .post-received { align-self: flex-start; background: var(--bubble-received); border-bottom-left-radius: 2px; }
 
-        /* Exact Replica Part */
-        .reply-replica {
+        /* INLINE REPLY */
+        .inline-reply {
             background: rgba(255,255,255,0.15); border-radius: 6px;
-            padding: 8px 12px; margin-bottom: 8px; position: relative;
-            border-right: 5px solid #ffffff; /* Vertical accent line on right as per capture */
-            display: flex; flex-direction: column; align-items: flex-end;
+            padding: 5px 8px; margin-bottom: 5px; border-right: 4px solid white;
             text-align: right;
         }
-        .reply-label { font-weight: bold; font-size: 0.8rem; margin-bottom: 2px; color: #fff; }
-        .reply-text { font-size: 0.8rem; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .reply-name { font-weight: bold; font-size: 0.7rem; color: #eee; }
+        .reply-msg { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 
-        .post-meta { display: flex; justify-content: flex-end; gap: 5px; font-size: 0.65rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
-        .post-media { max-width: 100%; border-radius: 12px; margin-top: 8px; }
+        .time { font-size: 0.6rem; color: rgba(255,255,255,0.5); text-align: right; display: block; margin-top: 2px; }
 
-        /* Toggle Sections */
-        .section { display: none; }
-        .section.active { display: block; }
+        /* BOTTOM INPUT AREA */
+        .composer {
+            background: #fff; border-top: 1px solid #eee; padding: 10px;
+            display: flex; flex-direction: column; flex-shrink: 0;
+            z-index: 600;
+        }
+        #reply-panel { background: #fdf2f4; border-left: 4px solid var(--primary); padding: 8px; margin-bottom: 10px; border-radius: 5px; display: none; }
+        .input-row { display: flex; gap: 8px; align-items: center; }
+        textarea { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ddd; font-family: inherit; font-size: 0.95rem; resize: none; max-height: 100px; outline: none; }
+        
+        #emoji-grid {
+            display: none; grid-template-columns: repeat(8, 1fr); gap: 10px;
+            max-height: 150px; overflow-y: auto; padding: 10px; font-size: 1.5rem; text-align: center;
+        }
 
         #video-overlay { background: black; z-index: 2000; display: none; }
-        #jitsi-box { width: 100%; height: 100%; }
-        .hangup-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; border-radius: 30px; }
+        .hangup { position: absolute; top: 15px; right: 15px; background: red; padding: 10px 20px; border-radius: 30px; }
 
-        footer { background: var(--dark); color: white; text-align: center; padding: 15px; font-size: 0.8rem; width: 100%; }
+        .section { display: none; height: 100%; border-radius: 10px; overflow-y: auto; }
+        .section.active { display: block; }
     </style>
 </head>
 
@@ -139,290 +127,222 @@
     <div id="login-screen">
         <div class="login-box">
             <h2>💕 Secret Password</h2>
-            <input type="password" id="entry-pass" placeholder="...">
+            <input type="password" id="pass-in" placeholder="...">
             <button onclick="login()">Enter</button>
         </div>
     </div>
 
     <div id="identity-screen" class="hidden">
         <div class="login-box">
-            <h2>Select Your Identity</h2>
-            <button onclick="selectUser('Caleb')">👨 Caleb</button>
-            <button onclick="selectUser('Caroline')" style="margin-top:10px">👩 Caroline</button>
+            <h2>Select Identity</h2>
+            <button onclick="pick('Caleb')">👨 Caleb</button>
+            <button onclick="pick('Caroline')" style="margin-top:10px">👩 Caroline</button>
         </div>
     </div>
 
     <div id="video-overlay">
-        <button class="hangup-btn" onclick="endCall()">Hangup 📞</button>
-        <div id="jitsi-box"></div>
+        <button class="hangup" onclick="hangup()">Hangup 📞</button>
+        <div id="jitsi-box" style="width:100%; height:100%"></div>
     </div>
 
     <div id="app">
         <header>
             <h1>💕 Love</h1>
             <div class="nav-links">
-                <a onclick="setMenu('feed')" id="n-feed" class="active">Home</a>
-                <a onclick="setMenu('gallery')" id="n-gallery">Gallery</a>
-                <a onclick="setMenu('calls')" id="n-calls">Calls</a>
+                <a onclick="go('feed')" id="m-feed" class="active">Chat</a>
+                <a onclick="go('gallery')" id="m-gallery">Gallery</a>
+                <a onclick="go('calls')" id="m-calls">Calls</a>
             </div>
             <div class="real-time" id="clock">00:00:00</div>
         </header>
 
-        <main>
-            <div id="profile-zone" class="profile-container"></div>
-
-            <div id="feed-sec" class="section active">
-                <div class="create-post">
-                    <div id="reply-panel">
-                        <span id="rep-auth" style="font-weight:bold; color:var(--primary); font-size:0.8rem"></span><br>
-                        <span id="rep-txt" style="font-size:0.85rem; color:#666"></span>
-                        <span style="float:right; cursor:pointer" onclick="closeRep()">✕</span>
-                    </div>
-                    <textarea id="msgIn" rows="3" placeholder="Message..." oninput="tellTyping()"></textarea>
-                    
-                    <div id="emoji-board"></div>
-
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <button onclick="postText()">Send</button>
-                            <span style="font-size:1.8rem; margin-left:15px; cursor:pointer" onclick="toggleEmojis()">😊</span>
-                        </div>
-                        <div>
-                            <button class="btn secondary" onclick="document.getElementById('fileIn').click()"><i class="fas fa-camera"></i></button>
-                            <button class="btn secondary" id="voiceBtn" onclick="handleVoice()"><i class="fas fa-microphone"></i></button>
-                        </div>
-                    </div>
-                    <input type="file" id="fileIn" class="hidden" accept="image/*,video/*" onchange="uploadFile()">
-                </div>
+        <main id="chatWindow">
+            <div id="section-feed" class="section active">
+                <div class="partner-head" id="partnerHead"></div>
                 <div class="feed" id="feedCont"></div>
             </div>
 
-            <div id="gallery-sec" class="section">
-                <div id="gallCont" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;"></div>
+            <div id="section-gallery" class="section">
+                <div id="gallCont" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px;"></div>
             </div>
 
-            <div id="calls-sec" class="section">
+            <div id="section-calls" class="section">
                 <div id="callsCont"></div>
             </div>
         </main>
 
-        <footer>Together since 2024 ❤️</footer>
+        <div class="composer" id="msgComposer">
+            <div id="reply-panel">
+                <span id="rep-name" style="font-weight:bold; color:var(--primary); font-size:0.75rem"></span><br>
+                <span id="rep-msg" style="font-size:0.8rem; color:#666"></span>
+                <span style="float:right; cursor:pointer" onclick="cancelReply()">✕</span>
+            </div>
+            <div id="emoji-grid"></div>
+            <div class="input-row">
+                <span style="font-size:1.6rem; cursor:pointer" onclick="toggleEmoji()">😊</span>
+                <textarea id="txtIn" rows="1" placeholder="Message..." oninput="pushTyping()"></textarea>
+                <button class="btn secondary" onclick="document.getElementById('imgIn').click()"><i class="fas fa-camera"></i></button>
+                <span id="voiceBtn" class="btn secondary" onclick="doVoice()"><i class="fas fa-microphone" id="micIco"></i></span>
+                <button onclick="send()">Send</button>
+            </div>
+            <input type="file" id="imgIn" class="hidden" accept="image/*,video/*" onchange="upload()">
+        </div>
     </div>
 
     <script>
         const API = 'https://couples-backend-afta.onrender.com';
-        let me = '', key = '', callApi = null, isTyping = false, timer, repData = null;
+        let me = '', pwd = '', callApi = null, isTyping = false, timer, replying = null;
 
-        const romance = ["❤️","💖","💕","💗","💓","💞","💘","😘","🥰","😍","😊","🤩","💍","💎","🧸","🌹","🌸","🌺","✨","🔥","💏","💑","👨‍❤️‍👨","👩‍❤️‍👩","🤝","💫"];
-
-        function toggleEmojis() {
-            const board = document.getElementById('emoji-board');
-            if (board.style.display === 'grid') { board.style.display = 'none'; } else {
-                board.innerHTML = romance.map(e => `<span class="emoji-item" onclick="insertEmoji('${e}')">${e}</span>`).join('');
-                board.style.display = 'grid';
-            }
-        }
-        function insertEmoji(e) { document.getElementById('msgIn').value += e; document.getElementById('msgIn').focus(); }
+        const emojis = ["❤️","💖","💕","😘","🥰","😍","😊","☺️","🤩","💍","💎","🧸","🌹","🌸","💏","💑","👩‍❤️‍💋‍👨","👨‍❤️‍💋‍👨","👩‍❤️‍💋‍👩","🤝","💫","✨","🔥"];
 
         function login() {
-            if (document.getElementById('entry-pass').value === 'MyLove') {
-                key = 'MyLove'; sessionStorage.setItem('key', key);
+            if (document.getElementById('pass-in').value === 'MyLove') {
+                pwd = 'MyLove'; sessionStorage.setItem('pwd', pwd);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
-            } else alert('Wrong! 💕');
+            } else alert('Unauthorized 💕');
         }
 
-        function selectUser(name) {
-            me = name; sessionStorage.setItem('user', name);
+        function pick(n) {
+            me = n; sessionStorage.setItem('user', n);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            start();
+            initApp();
         }
 
         if (sessionStorage.getItem('user')) {
-            me = sessionStorage.getItem('user'); key = sessionStorage.getItem('key');
+            me = sessionStorage.getItem('user'); pwd = sessionStorage.getItem('pwd');
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            start();
+            initApp();
         }
 
-        function start() {
-            drawProfile(); getFeed();
-            setInterval(() => ping(isTyping), 3000); 
-            setInterval(getFeed, 10000);
-            setInterval(getStatus, 4000);
+        function initApp() {
+            renderPartner();
+            loadFeed(true);
+            setInterval(() => loadFeed(), 8000);
+            setInterval(() => pingServer(isTyping), 3000);
+            setInterval(updateStatus, 4000);
             setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
         }
 
-        function drawProfile() {
+        function renderPartner() {
             const isMeC = me === 'Caleb';
             const opp = isMeC ? 'Caroline' : 'Caleb';
             const img = isMeC ? './caroline.png' : './caleb.png';
-            document.getElementById('profile-zone').innerHTML = `
-                <div class="profile">
-                    <img src="${img}" alt="${opp}">
-                    <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
-                    <div class="quick-call-actions">
-                        <a onclick="startCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
-                        <a onclick="startCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
-                    </div>
+            document.getElementById('partnerHead').innerHTML = `
+                <img src="${img}" class="partner-img"><br>
+                <span id="st-${opp}" class="partner-st">Offline ⚪</span>
+                <div style="margin-top:10px">
+                    <a onclick="doCall('Audio')" style="color:#fff; font-size:1.2rem; margin-right:20px"><i class="fas fa-phone"></i></a>
+                    <a onclick="doCall('Video')" style="color:#fff; font-size:1.2rem"><i class="fas fa-video"></i></a>
                 </div>`;
         }
 
-        async function startCall(t) {
+        async function doCall(t) {
             document.getElementById('video-overlay').style.display = 'flex';
-            const ops = {
-                roomName: "Secret_Space_Private_Final", parentNode: document.querySelector('#jitsi-box'),
-                configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: t === 'Audio' }
-            };
-            callApi = new JitsiMeetExternalAPI("meet.jit.si", ops);
+            callApi = new JitsiMeetExternalAPI("meet.jit.si", { roomName: "OurSweetSecurityRoom_Final", parentNode: document.querySelector('#jitsi-box')});
             await fetch(`${API}/log-call?caller=${me}&type=${t}`, { method: 'POST', headers: auth() });
         }
+        function hangup() { if(callApi) callApi.dispose(); document.getElementById('video-overlay').style.display = 'none'; }
 
-        function endCall() { 
-            if (callApi) { callApi.dispose(); callApi = null; }
-            document.getElementById('video-overlay').style.display = 'none';
+        function auth() { return { 'Authorization': 'Bearer ' + pwd }; }
+
+        async function send() {
+            const txt = document.getElementById('txtIn').value; if (!txt.trim()) return;
+            const rpc = replying ? `reply_to_content=${encodeURIComponent(replying.content)}&reply_to_author=${replying.author}` : '';
+            await fetch(`${API}/post?content=${encodeURIComponent(txt)}&author=${me}&${rpc}`, { method: 'POST', headers: auth() });
+            document.getElementById('txtIn').value = ''; cancelReply(); loadFeed(true);
         }
 
-        function auth() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('key') }; }
-
-        async function postText() {
-            const val = document.getElementById('msgIn').value; if (!val.trim()) return;
-            const repParam = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
-            await fetch(`${API}/post?content=${encodeURIComponent(val)}&author=${me}&${repParam}`, { method: 'POST', headers: auth() });
-            document.getElementById('msgIn').value = ''; closeRep(); getFeed();
-        }
-
-        async function uploadFile() {
-            const f = document.getElementById('fileIn').files[0];
-            const fd = new FormData(); fd.append('author', me); fd.append('content', "📸 Photo sent"); fd.append('media', f);
+        async function upload() {
+            const f = document.getElementById('imgIn').files[0];
+            const fd = new FormData(); fd.append('author', me); fd.append('content', "📸 Moment"); fd.append('media', f);
             await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-            getFeed();
+            loadFeed(true);
         }
 
-        async function getFeed() {
+        async function loadFeed(scroll = false) {
             const res = await fetch(`${API}/posts`, { headers: auth() });
             const posts = await res.json();
             const cont = document.getElementById('feedCont');
             cont.innerHTML = posts.map(p => {
-                const isMine = p.author === me;
-                const sideClass = isMine ? 'post-sent' : 'post-received';
-                
-                let replicaHtml = '';
-                if (p.reply_to_content) {
-                    replicaHtml = `
-                    <div class="reply-replica">
-                        <span class="reply-label">${p.reply_to_author} ❤️</span>
-                        <span class="reply-text">${p.reply_to_content}</span>
-                    </div>`;
-                }
-
-                let media = '';
-                if (p.image_url) {
-                    const u = `${API}${p.image_url}`;
-                    const t = p.media_type || 'image';
-                    if (t === 'audio') media = `<audio src="${u}" controls style="width:100%"></audio>`;
-                    else if (t === 'video') media = `<video src="${u}" controls class="post-media"></video>`;
-                    else media = `<img src="${u}" class="post-media" onclick="window.open('${u}')">`;
-                }
-
+                const isMe = p.author === me;
+                let reply = p.reply_to_content ? `<div class="inline-reply"><span class="reply-name">${p.reply_to_author} ❤️</span><span class="reply-msg">${p.reply_to_content}</span></div>` : '';
+                let media = (p.image_url) ? `<img src="${API}${p.image_url}" class="post-media" onclick="window.open('${API}${p.image_url}')">` : '';
                 return `
-                <div class="post ${sideClass}" onmousedown="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" ontouchstart="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
-                    ${replicaHtml}
-                    <div class="post-content">${p.content}</div>
+                <div class="post ${isMe ? 'post-sent':'post-received'}" 
+                     onmousedown="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" 
+                     ontouchstart="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
+                    ${reply}
+                    <div>${p.content}</div>
                     ${media}
-                    <div class="post-meta">
-                        <span>${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-                        ${isMine ? '<i class="fas fa-check-double" style="color:#d1c4e9"></i>' : ''}
-                    </div>
+                    <span class="time">${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
                 </div>`;
             }).join('');
+            if (scroll) { const main = document.getElementById('chatWindow'); main.scrollTop = main.scrollHeight; }
         }
 
-        function onSwipe(e, auth, cont) {
+        function onSwipe(e, a, c) {
             const t = e.target.closest('.post'); if (!t) return;
             let sx = e.clientX || e.touches[0].clientX;
-            const move = (me) => {
-                let dx = (me.clientX || me.touches[0].clientX) - sx;
-                if (dx > 20) t.style.transform = `translateX(${Math.min(dx, 80)}px)`;
-            };
-            const end = (ee) => {
-                let dx = (ee.clientX || ee.changedTouches[0].clientX) - sx;
-                if (dx > 60) setRep(auth, cont);
-                t.style.transform = '';
-                document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
-                document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end);
-            };
-            document.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
-            document.addEventListener('touchmove', move); document.addEventListener('touchend', end);
+            const move = (me) => { let dx = (me.clientX || me.touches[0].clientX) - sx; if (dx > 20) t.style.transform = `translateX(${Math.min(dx, 60)}px)`; };
+            const end = (ee) => { let dx = (ee.clientX || ee.changedTouches[0].clientX) - sx; if (dx > 50) setRep(a, c); t.style.transform = ''; document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end); document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end); };
+            document.addEventListener('mousemove', move); document.addEventListener('mouseup', end); document.addEventListener('touchmove', move); document.addEventListener('touchend', end);
         }
 
         function setRep(a, c) {
-            repData = { author: a, content: c };
+            replying = { author: a, content: c };
             document.getElementById('reply-panel').style.display = 'block';
-            document.getElementById('rep-auth').innerText = a;
-            document.getElementById('rep-txt').innerText = c;
-            document.getElementById('msgIn').focus();
+            document.getElementById('rep-name').innerText = a;
+            document.getElementById('rep-msg').innerText = c;
+            document.getElementById('txtIn').focus();
         }
-        function closeRep() { repData = null; document.getElementById('reply-panel').style.display = 'none'; }
+        function cancelReply() { replying = null; document.getElementById('reply-panel').style.display = 'none'; }
         
-        function tellTyping() { if (!isTyping) { isTyping = true; ping(true); } clearTimeout(timer); timer = setTimeout(() => { isTyping = false; ping(false); }, 4000); }
-        async function ping(t) { await fetch(`${API}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
+        function pushTyping() { if (!isTyping) { isTyping = true; pingServer(true); } clearTimeout(timer); timer = setTimeout(() => { isTyping = false; pingServer(false); }, 4000); }
+        async function pingServer(t) { await fetch(`${API}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
         
-        async function getStatus() {
+        async function updateStatus() {
             const res = await fetch(`${API}/status`, { headers: auth() });
             const d = await res.json();
             const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
             const el = document.getElementById(`st-${opp}`);
             if (el) {
-                if (d.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "var(--primary)"; }
-                else if (d[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#22c55e"; }
-                else { el.innerHTML = "Offline ⚪"; el.style.color = "#888"; }
+                if (d.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "#fff"; }
+                else if (d[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#fff"; }
+                else { el.innerHTML = "Offline ⚪"; el.style.color = "#ddd"; }
             }
         }
 
-        function setMenu(s) {
+        function go(s) {
             document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(`${s}-sec`).classList.add('active');
+            document.getElementById(`section-${s}`).classList.add('active');
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            document.getElementById(`n-${s}`).classList.add('active');
-            if (s === 'gallery') loadGall();
-            if (s === 'calls') loadCalls();
+            document.getElementById(`m-${s}`).classList.add('active');
+            document.getElementById('msgComposer').style.display = (s === 'feed') ? 'flex' : 'none';
         }
 
-        async function loadGall() {
-            const res = await fetch(`${API}/posts`, { headers: auth() });
-            const ps = await res.json();
-            document.getElementById('gallCont').innerHTML = ps
-                .filter(p => p.image_url && (!p.media_type || p.media_type==='image'))
-                .map(p => `<img src="${API}${p.image_url}" style="width:100%; border-radius:10px;">`).join('');
+        function toggleEmoji() {
+            const g = document.getElementById('emoji-grid');
+            if (g.style.display === 'grid') g.style.display = 'none'; else {
+                g.innerHTML = emojis.map(e => `<span onclick="document.getElementById('txtIn').value += '${e}'">${e}</span>`).join('');
+                g.style.display = 'grid';
+            }
         }
 
-        async function loadCalls() {
-            const res = await fetch(`${API}/calls`, { headers: auth() });
-            const logs = await res.json();
-            document.getElementById('callsCont').innerHTML = logs.map(l => `
-                <div style="background:white; padding:12px; border-radius:10px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-                    <i class="fas fa-${l.type==='Video'?'video':'phone'}" style="color:var(--primary); margin-right:10px;"></i>
-                    <b>${l.type} Call</b> <span style="float:right; font-size:0.8rem; color:#888">${new Date(l.timestamp).toLocaleTimeString()}</span>
-                </div>`).join('');
-        }
-
-        let micRec; let micCh = [];
-        async function handleVoice() {
-            const b = document.getElementById('voiceBtn');
-            if (b.classList.contains('active')) {
-                micRec.stop(); b.classList.remove('active'); b.style.color = 'inherit';
-            } else {
+        let rec; let chunks = [];
+        async function doVoice() {
+            const ico = document.getElementById('micIco');
+            if (ico.classList.contains('rec')) { rec.stop(); ico.classList.remove('rec'); ico.style.color = 'inherit'; } else {
                 const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-                micRec = new MediaRecorder(s); micRec.start();
-                b.classList.add('active'); b.style.color = 'red';
-                micCh = []; micRec.ondataavailable = e => micCh.push(e.data);
-                micRec.onstop = async () => {
-                    const bl = new Blob(micCh, { type: 'audio/webm' });
-                    const fd = new FormData(); fd.append('author', me); fd.append('content', "🎤 Voice message"); fd.append('media', bl, "v.webm");
+                rec = new MediaRecorder(s); rec.start(); ico.classList.add('rec'); ico.style.color = 'red';
+                chunks = []; rec.ondataavailable = e => chunks.push(e.data);
+                rec.onstop = async () => {
+                    const bl = new Blob(chunks, { type: 'audio/webm' });
+                    const fd = new FormData(); fd.append('author', me); fd.append('content', "🎤 Voice"); fd.append('media', bl, "v.webm");
                     await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-                    getFeed();
+                    loadFeed(true);
                 };
             }
         }
