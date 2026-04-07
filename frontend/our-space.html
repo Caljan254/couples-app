@@ -1,0 +1,478 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>💕 Our Special Space</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        /* Create Post Card */
+        .create-post {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .author-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .author-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .author-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .post-btn {
+            flex: 1;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .post-btn:active {
+            transform: scale(0.98);
+        }
+
+        .photo-btn {
+            background: #48bb78;
+        }
+
+        /* Posts Container */
+        .posts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Individual Post */
+        .post {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .author {
+            font-weight: bold;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .timestamp {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .post-content {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .post-image {
+            max-width: 100%;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .heart-btn,
+        .comment-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        .heart-btn:hover,
+        .comment-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        .heart-count {
+            font-size: 16px;
+            margin-left: 5px;
+        }
+
+        .comments-section {
+            margin-top: 15px;
+        }
+
+        .comment {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .comment-text {
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .add-comment {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .comment-submit {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Photo input hidden */
+        #photoInput {
+            display: none;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+
+const SECRET_KEY = "couples_love";
+
+// Add password prompt
+const userPass = prompt("Enter our secret code:");
+if (userPass !== SECRET_KEY) {
+document.body.innerHTML = "<h1>🔒 Private Space</h1>
+<p>Only for us ❤️</p>";
+throw new Error("Access denied");
+}
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💕 Our Special Space</h1>
+            <p>Share your love, thoughts, and memories</p>
+        </div>
+
+        <div class="create-post">
+            <div class="author-selector">
+                <button class="author-btn active" onclick="setAuthor('you')">💙 You</button>
+                <button class="author-btn" onclick="setAuthor('loved one')">💖 Loved One</button>
+            </div>
+            <textarea id="postContent" placeholder="What's on your heart? 💭" rows="3"></textarea>
+            <div class="post-actions">
+                <button class="post-btn" onclick="createTextPost()">💬 Share Message</button>
+                <button class="post-btn photo-btn" onclick="document.getElementById('photoInput').click()">📸 Share
+                    Photo</button>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" onchange="uploadPhoto()">
+        </div>
+
+        <div id="postsContainer" class="posts-container">
+            <div class="loading">Loading your memories... 💕</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - CHANGE THIS TO YOUR BACKEND URL
+        const API_URL = 'http://localhost:8000';  // Change to your server IP
+        let currentAuthor = 'you';
+
+        function setAuthor(author) {
+            currentAuthor = author;
+            document.querySelectorAll('.author-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        async function createTextPost() {
+            const content = document.getElementById('postContent').value;
+            if (!content.trim()) {
+                alert('Please write something! 💝');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    document.getElementById('postContent').value = '';
+                    loadPosts();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Could not post. Make sure the backend is running!');
+            }
+        }
+
+        async function uploadPhoto() {
+            const file = document.getElementById('photoInput').files[0];
+            const content = document.getElementById('postContent').value || "📸 Shared a photo!";
+
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('author', currentAuthor);
+            formData.append('content', content);
+            formData.append('photo', file);
+
+            try {
+                const response = await fetch(`${API_URL}/upload-photo`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    document.getElementById('postContent').value = '';
+                    document.getElementById('photoInput').value = '';
+                    loadPosts();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Could not upload photo!');
+            }
+        }
+
+        async function addHeart(postId) {
+            try {
+                await fetch(`${API_URL}/heart/${postId}`, { method: 'POST' });
+                loadPosts();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function addComment(postId) {
+            const commentInput = document.getElementById(`comment-${postId}`);
+            const comment = commentInput.value;
+
+            if (!comment.trim()) return;
+
+            try {
+                await fetch(`${API_URL}/comment/${postId}?author=${currentAuthor}&comment=${encodeURIComponent(comment)}`, {
+                    method: 'POST'
+                });
+                commentInput.value = '';
+                loadPosts();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function toggleComments(postId) {
+            const commentsDiv = document.getElementById(`comments-${postId}`);
+            if (commentsDiv.style.display === 'none') {
+                commentsDiv.style.display = 'block';
+            } else {
+                commentsDiv.style.display = 'none';
+            }
+        }
+
+        async function loadPosts() {
+            try {
+                const response = await fetch(`${API_URL}/posts`);
+                const posts = await response.json();
+
+                const container = document.getElementById('postsContainer');
+
+                if (posts.length === 0) {
+                    container.innerHTML = '<div class="loading">No posts yet. Share something! 💕</div>';
+                    return;
+                }
+
+                container.innerHTML = posts.map(post => `
+                    <div class="post">
+                        <div class="post-header">
+                            <span class="author">${post.author === 'you' ? '💙 You' : '💖 Loved One'}</span>
+                            <span class="timestamp">${new Date(post.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="post-content">${escapeHtml(post.content)}</div>
+                        ${post.image_url ? `<img src="${API_URL}${post.image_url}" class="post-image" alt="Shared photo">` : ''}
+                        <div class="post-stats">
+                            <button class="heart-btn" onclick="addHeart('${post.id}')">
+                                ❤️ <span class="heart-count">${post.hearts}</span>
+                            </button>
+                            <button class="comment-toggle" onclick="toggleComments('${post.id}')">
+                                💬 ${post.comments.length} comments
+                            </button>
+                        </div>
+                        <div class="comments-section" id="comments-${post.id}" style="display: none;">
+                            ${post.comments.map(comment => `
+                                <div class="comment">
+                                    <div class="comment-author">${comment.author === 'you' ? '💙 You' : '💖 Loved One'}</div>
+                                    <div class="comment-text">${escapeHtml(comment.comment)}</div>
+                                    <div class="timestamp" style="font-size: 10px;">${new Date(comment.timestamp).toLocaleString()}</div>
+                                </div>
+                            `).join('')}
+                            <div class="add-comment">
+                                <input type="text" id="comment-${post.id}" class="comment-input" placeholder="Write a reply... 💕">
+                                <button class="comment-submit" onclick="addComment('${post.id}')">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('postsContainer').innerHTML = `
+                    <div class="loading">
+                        ❌ Cannot connect to server.<br>
+                        Make sure the backend is running at ${API_URL}
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load posts every 5 seconds (real-time updates)
+        loadPosts();
+        setInterval(loadPosts, 5000);
+    </script>
+</body>
+
+</html>
