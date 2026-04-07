@@ -18,6 +18,7 @@
             --secondary: #ff758c;
             --dark: #1e1e24;
             --light: #fff5f7;
+            --primary-light: rgba(253, 47, 86, 0.1);
             --glass: rgba(255, 255, 255, 0.85);
         }
 
@@ -78,19 +79,23 @@
 
         /* Compose */
         .create-post { background: var(--glass); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        #reply-panel { background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary); padding: 10px; margin-bottom: 15px; border-radius: 5px; display: none; }
+        #reply-panel { 
+            background: white; border-left: 5px solid var(--primary); padding: 10px; 
+            margin-bottom: 15px; border-radius: 5px; display: none;
+            box-shadow: inset 5px 0 0 -2px var(--primary);
+        }
         textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; margin-bottom: 10px; }
 
-        /* Custom Emoji Board Styled like WhatsApp */
+        /* Custom Emoji Board */
         #emoji-board {
             display: none; background: white; border-radius: 12px; padding: 0;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.1); margin-bottom: 10px;
-            max-height: 350px; flex-direction: column;
+            max-height: 300px; flex-direction: column; width:100%;
         }
         .emoji-tabs { display: flex; background: #f5f5f5; border-radius: 12px 12px 0 0; padding: 10px; gap: 15px; justify-content: center; }
         .emoji-tab { cursor: pointer; opacity: 0.5; font-size: 1.2rem; }
         .emoji-tab.active { opacity: 1; border-bottom: 2px solid var(--primary); }
-        .emoji-list { padding: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; font-size: 1.8rem; height: 250px; overflow-y: auto; text-align: center; }
+        .emoji-list { padding: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; font-size: 1.8rem; height: 200px; overflow-y: auto; text-align: center; }
         .emoji-item { cursor: pointer; transition: 0.1s; display: inline-block; }
         .emoji-item:active { transform: scale(1.3); }
 
@@ -98,17 +103,20 @@
         .feed { display: flex; flex-direction: column; gap: 15px; }
         .post {
             background: var(--glass); border-radius: 20px; padding: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s;
-            cursor: pointer; touch-action: pan-x;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            cursor: pointer; touch-action: pan-y;
         }
         .post-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-bottom: 8px; }
         .post-author { font-weight: bold; color: var(--primary); }
         
+        /* Boxed Quote Style (WhatsApp Style) */
         .quoted-box {
-            background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary);
-            padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem;
+            background: rgba(0,0,0,0.04); border-left: 4px solid var(--primary);
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem;
+            position: relative; overflow: hidden;
         }
-        .quoted-author { font-weight: bold; display: block; color: var(--primary); margin-bottom: 2px; }
+        .quoted-author { font-weight: bold; display: block; color: var(--primary); margin-bottom: 3px; font-size: 0.8rem; }
+        .quoted-text { color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 
         .post-media { max-width: 100%; border-radius: 12px; margin-top: 10px; }
 
@@ -171,7 +179,6 @@
                     </div>
                     <textarea id="msgIn" rows="3" placeholder="Write something sweet..." oninput="tellTyping()"></textarea>
                     
-                    <!-- New WhatsApp Styled Emoji Board -->
                     <div id="emoji-board">
                         <div class="emoji-tabs">
                             <span class="emoji-tab active" onclick="switchCategory('faces')">😊</span>
@@ -213,46 +220,38 @@
         const API = 'https://couples-backend-afta.onrender.com';
         let me = '', key = '', callApi = null, isTyping = false, timer, repData = null;
 
-        // Custom High-Quality Emoji Database (ALL CATEGORIES)
+        // Custom High-Quality Emoji Database
         const emojiCategories = {
-            faces: ["😀","😃","😄","😁","😆","😅","😂","🤣","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾"],
-            hearts: ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","💌","💏","💑","💏","👩‍❤️‍💋‍👨","👨‍❤️‍💋‍👨","👩‍❤️‍💋‍👩","👩‍❤️‍👨","👨‍❤️‍👨","👩‍❤️‍👩"],
-            others: ["🌹","🌸","🌺","🌷","🌻","🌼","🍀","💍","💎","🎁","🎈","🧸","🍷","🥂","🎂","⭐️","🌙","🌞","🌈","🦋","🍓","🍒","🍫","🍭","🍿","☕️","🍹","🍔","🍕","🍓","🍇","🍑","🍎","🥑"],
-            more: ["🏳️","🏴","🏁","🚩","🏳️‍🌈","🎌","🇦🇫","🇦🇱","🇩🇿","🇦🇸","🇦🇩","🇦🇴","🇦🇮","🇦🇶","🇦🇬","🇦🇷","🇦🇲","🇦🇼","🇦🇺","🇦🇹","🇦🇿","🇧🇸","🇧🇭","🇧🇩","🇧🇧","🇧🇾","🇧🇪","🇧🇿","🇧🇯","🇧🇲","🇧🇹","🇧🇴","🇧🇦","🇧🇼","🇧🇷","🇮🇴","🇻🇬","🇧🇳","🇧🇬","🇧🇫","🇧🇮","🇰🇭","🇨🇲","🇨🇦","🇮🇨","🇨🇻","🇧🇶","🇰🇾","🇨🇫","🇹🇩","🇨🇱","🇨🇳","🇨🇽","🇰🇪","🇰🇮","🇰🇼","🇰🇬","🇱🇦","🇱🇻","🇱🇧","🇱🇸","🇱🇷","🇱🇾","🇱🇮","🇱🇹","🇱🇺","🇲🇴","🇲🇰","🇲🇬","🇲🇼","🇲🇾","🇲🇻","🇲🇱","🇲🇹","🇲🇭","🇲🇶","🇲🇷","🇲🇺","🇾🇹","🇲🇽","🇫🇲","🇲🇩","🇲🇨","🇲🇳","🇲🇪","🇲🇸","🇲🇦","🇲🇿","🇲🇲","🇳🇦","🇳🇷","🇳🇵","🇳🇱","🇳🇨","🇳🇿","🇳🇮","🇳🇪","🇳🇬","🇳🇺","🇳🇫","🇰🇵","🇲🇵","🇳🇴","🇴🇲","🇵🇰","🇵🇼","🇵🇸","🇵🇦","🇵🇬","🇵🇾","🇵🇪","🇵🇭","🇵🇳","🇵🇱","🇵🇹","🇵🇷","🇶🇦","🇷🇪","🇷🇴","🇷🇺","🇷🇼","🇼🇸","🇸🇲","🇸🇹","🇸🇦","🇸🇳","🇸🇷","🇸🇿","🇸🇪","🇨🇭","🇸🇾","🇹🇼","🇹🇯","🇹🇿","🇹🇭","🇹🇱","🇹🇬","🇹🇰","🇹🇴","🇹🇹","🇹🇳","🇹🇷","🇹🇲","🇹🇨","🇹🇻","🇺🇬","🇺🇦","🇦🇪","🇬🇧","🇺🇸","🇺🇾","🇺🇿","🇻🇺","🇻🇦","🇻🇪","🇻🇳","🇼🇫","🇪🇭","🇾🇪","🇿🇲","🇿🇼"]
+            faces: ["😊","🥰","😘","😍","🤣","😂","😅","😆","😉","😇","🙂","😋","😛","🤪","🧐","😎","🥳","😏","😞","😟","🥺","😢","😭","😫","😩","😤","😡","🤯","😳","😱","🤔","🤫","🤥","😴","🤤","😷","😈","💩","👻"],
+            hearts: ["❤️","💖","💕","💗","💓","💞","💘","💝","💟","❣️","💔","💌","💏","💑","💏","👩‍❤️‍💋‍👨","👨‍❤️‍💋‍👨","👩‍❤️‍💋‍👩","👩‍❤️‍👨","👨‍❤️‍👨","👩‍❤️‍👩"],
+            others: ["🌹","🌸","🌺","🌷","🌻","🌼","🍀","💍","💎","🎁","🎈","🧸","🍷","🥂","🎂","⭐️","🌙","🌞","🌈","🦋","🍓","🍒","🍫","🍭","🍿","🌹","🔥","✨"],
+            more: ["🏳️","🏁","🚩","🏳️‍🌈","🇰🇪","🇦🇪","🇬🇧","🇺🇸","🏁"]
         };
 
         function toggleEmojiBoard() {
             const board = document.getElementById('emoji-board');
-            if (board.style.display === 'flex') {
-                board.style.display = 'none';
-            } else {
-                switchCategory('faces');
-                board.style.display = 'flex';
-            }
+            board.style.display = board.style.display === 'flex' ? 'none' : 'flex';
+            if(board.style.display === 'flex') switchCategory('faces');
         }
 
         function switchCategory(cat) {
             document.querySelectorAll('.emoji-tab').forEach(t => t.classList.remove('active'));
             const idx = Object.keys(emojiCategories).indexOf(cat);
             document.querySelectorAll('.emoji-tab')[idx].classList.add('active');
-            
             const list = document.getElementById('emoji-list');
             list.innerHTML = emojiCategories[cat].map(e => `<span class="emoji-item" onclick="insertEmoji('${e}')">${e}</span>`).join('');
         }
 
         function insertEmoji(e) {
-            const input = document.getElementById('msgIn');
-            input.value += e;
-            input.focus();
+            const input = document.getElementById('msgIn'); input.value += e; input.focus();
         }
 
-        // Standard App Logic (Login, Profile, Feed)
         function login() {
             if (document.getElementById('entry-pass').value === 'MyLove') {
                 key = 'MyLove'; sessionStorage.setItem('key', key);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
-            } else alert('Wrong! 💕');
+            } else alert('Unauthorized 💕');
         }
 
         function selectUser(name) {
@@ -271,7 +270,6 @@
 
         function start() {
             drawProfile(); getFeed();
-            // Heartbeat: Always stay "Ready" while app is open
             setInterval(() => ping(isTyping), 3000); 
             setInterval(getFeed, 10000);
             setInterval(getStatus, 4000);
@@ -295,9 +293,8 @@
 
         async function startCall(t) {
             document.getElementById('video-overlay').style.display = 'flex';
-            const roomName = "TheSecretRoom_FinalVersion";
             const ops = {
-                roomName: roomName, parentNode: document.querySelector('#jitsi-box'),
+                roomName: "CoupleSpace_SafeRoom_Direct_V3", parentNode: document.querySelector('#jitsi-box'),
                 configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: t === 'Audio' }
             };
             callApi = new JitsiMeetExternalAPI("meet.jit.si", ops);
@@ -313,11 +310,9 @@
 
         async function postText() {
             const val = document.getElementById('msgIn').value; if (!val.trim()) return;
-            const repParam = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
-            await fetch(`${API}/post?content=${encodeURIComponent(val)}&author=${me}&${repParam}`, { method: 'POST', headers: auth() });
-            document.getElementById('msgIn').value = ''; closeRep(); 
-            document.getElementById('emoji-board').style.display = 'none';
-            getFeed();
+            const rpc = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
+            await fetch(`${API}/post?content=${encodeURIComponent(val)}&author=${me}&${rpc}`, { method: 'POST', headers: auth() });
+            document.getElementById('msgIn').value = ''; closeRep(); getFeed();
         }
 
         async function uploadFile() {
@@ -332,8 +327,7 @@
             const posts = await res.json();
             const cont = document.getElementById('feedCont');
             cont.innerHTML = posts.map(p => {
-                let quote = '';
-                if (p.reply_to_content) quote = `<div class="quoted-box"><span class="quoted-author">${p.reply_to_author}</span>${p.reply_to_content}</div>`;
+                let quote = p.reply_to_content ? `<div class="quoted-box"><span class="quoted-author">${p.reply_to_author}</span><span class="quoted-text">${p.reply_to_content}</span></div>` : '';
                 let media = '';
                 if (p.image_url) {
                     const u = `${API}${p.image_url}`;
@@ -343,8 +337,8 @@
                     else media = `<img src="${u}" class="post-media" onclick="window.open('${u}')">`;
                 }
                 return `
-                <div class="post" onmousedown="onSlide(event, '${p.author}', '${p.content.replace("'","")}')" ontouchstart="onSlide(event, '${p.author}', '${p.content.replace("'","")}')">
-                    <div class="post-header"><span class="post-author">${p.author}</span><span>${new Date(p.timestamp).toLocaleTimeString()}</span></div>
+                <div class="post" onmousedown="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" ontouchstart="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
+                    <div class="post-header"><span class="post-author">${p.author}</span><span>${new Date(p.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div>
                     ${quote}
                     <div>${p.content}</div>
                     ${media}
@@ -352,7 +346,8 @@
             }).join('');
         }
 
-        function onSlide(e, auth, cont) {
+        // WhatsApp Swipe To Reply Logic
+        function onSwipe(e, auth, cont) {
             const t = e.target.closest('.post'); if (!t) return;
             let sx = e.clientX || e.touches[0].clientX;
             const move = (me) => {
@@ -379,11 +374,7 @@
         }
         function closeRep() { repData = null; document.getElementById('reply-panel').style.display = 'none'; }
         
-        function tellTyping() { 
-            if (!isTyping) { isTyping = true; ping(true); } 
-            clearTimeout(timer); 
-            timer = setTimeout(() => { isTyping = false; ping(false); }, 4000); 
-        }
+        function tellTyping() { if (!isTyping) { isTyping = true; ping(true); } clearTimeout(timer); timer = setTimeout(() => { isTyping = false; ping(false); }, 4000); }
         async function ping(t) { await fetch(`${API}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
         
         async function getStatus() {
@@ -428,9 +419,7 @@
         let micRec; let micCh = [];
         async function handleVoice() {
             const b = document.getElementById('voiceBtn');
-            if (b.classList.contains('active')) {
-                micRec.stop(); b.classList.remove('active'); b.style.color = 'inherit';
-            } else {
+            if (b.classList.contains('active')) { micRec.stop(); b.classList.remove('active'); b.style.color = 'inherit'; } else {
                 const s = await navigator.mediaDevices.getUserMedia({ audio: true });
                 micRec = new MediaRecorder(s); micRec.start();
                 b.classList.add('active'); b.style.color = 'red';
