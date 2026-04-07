@@ -9,6 +9,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#fd2f56">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #fd2f56;
@@ -32,8 +33,8 @@
             overflow-x: hidden;
         }
 
-        /* Login Overlay */
-        #login-screen {
+        /* Login & Identity Overlay */
+        #login-screen, #identity-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -49,9 +50,10 @@
             transition: opacity 0.5s;
         }
 
-        #login-screen.hidden {
+        .hidden {
             opacity: 0;
             pointer-events: none;
+            display: none !important;
         }
 
         .login-box {
@@ -79,7 +81,7 @@
             outline: none;
         }
 
-        .login-box button {
+        .login-box button, .identity-btn {
             background: var(--primary);
             color: white;
             border: none;
@@ -89,9 +91,10 @@
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.2s;
+            margin: 10px;
         }
 
-        .login-box button:hover {
+        .login-box button:hover, .identity-btn:hover {
             transform: scale(1.05);
         }
 
@@ -147,82 +150,80 @@
         main {
             flex: 1;
             padding: 40px 20px;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
             width: 100%;
         }
 
-        /* Profiles Layout */
-        .profiles {
+        /* Profile Layout */
+        .profile-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
         }
 
         .profile {
             background: var(--glass);
-            padding: 20px;
+            padding: 25px;
             border-radius: 20px;
             text-align: center;
-            flex: 1;
+            width: 100%;
+            max-width: 400px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .profile img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary);
-            margin-bottom: 15px;
-        }
-
-        .profile h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .contact-actions {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .contact-btn {
-            padding: 8px 15px;
+            width: 100%;
+            max-width: 300px;
+            height: auto;
             border-radius: 20px;
-            text-decoration: none;
-            color: white;
+            object-fit: contain;
+            background: rgba(255,255,255,0.2);
+            border: 5px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
             font-weight: bold;
-            font-size: 0.9em;
-            display: inline-block;
+            z-index: 10;
         }
 
-        .wa-btn {
-            background: #25D366;
+        .quick-call-actions {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10;
         }
 
-        .call-btn {
-            background: #0088cc;
+        .call-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        /* Heart animation */
-        .heart-center {
-            font-size: 4em;
-            animation: beat 1s infinite alternate;
-        }
-
-        @keyframes beat {
-            0% {
-                transform: scale(1);
-            }
-
-            100% {
-                transform: scale(1.2);
-            }
-        }
+        .call-icon:hover { transform: scale(1.1); }
+        .icon-video { color: #fd2f56; }
+        .icon-phone { color: #25D366; }
 
         /* Create Post Area */
         .create-post {
@@ -231,28 +232,6 @@
             padding: 25px;
             margin-bottom: 30px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .author-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .author-btn {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid transparent;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: inherit;
-        }
-
-        .author-btn.active {
-            background: var(--primary);
-            color: white;
         }
 
         textarea {
@@ -286,60 +265,68 @@
             gap: 5px;
         }
 
-        .action-btn.secondary {
-            background: #ff758c;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
+        .action-btn.secondary { background: #ff758c; }
+        input[type="file"] { display: none; }
 
         /* Feed */
-        .feed {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
+        .feed { display: flex; flex-direction: column; gap: 20px; }
+        
         .post {
             background: var(--glass);
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            cursor: pointer;
         }
 
         .post-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 0.9em;
             color: #555;
         }
 
-        .post-author {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 1.2em;
+        .post-author { font-weight: bold; color: var(--primary); font-size: 1.1em; }
+        .post-content { font-size: 1.1em; line-height: 1.5; margin-bottom: 10px; }
+        .post-media { max-width: 100%; border-radius: 15px; margin-bottom: 10px; }
+        .post-video, .post-audio { width: 100%; border-radius: 10px; margin-bottom: 10px; outline: none; }
+
+        /* Gallery Section */
+        #gallery-section {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 20px 0;
         }
 
-        .post-content {
-            font-size: 1.1em;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-
-        .post-media {
-            max-width: 100%;
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-
-        .post-video,
-        .post-audio {
+        .gallery-item {
             width: 100%;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            outline: none;
+            aspect-ratio: 1/1;
+            border-radius: 15px;
+            object-fit: cover;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Reply Preview Box */
+        #reply-preview {
+            display: none;
+            background: rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .close-reply {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         /* Footer */
@@ -352,31 +339,8 @@
         }
 
         @media (max-width: 768px) {
-            .profiles {
-                flex-direction: column;
-            }
-
-            .header-nav {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            header {
-                flex-direction: column;
-                text-align: center;
-                padding: 15px;
-            }
-        }
-
-        .status-indicator {
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            font-weight: bold;
-            color: #888;
-        }
-
-        .status-online {
-            color: #25D366;
+            header { flex-direction: column; text-align: center; padding: 15px;}
+            .nav-links { margin-top: 10px; }
         }
     </style>
 </head>
@@ -394,74 +358,52 @@
         </div>
     </div>
 
+    <!-- Identity Selection -->
+    <div id="identity-screen" class="hidden">
+        <div class="login-box">
+            <h2>Who are you? 💕</h2>
+            <button class="identity-btn" onclick="selectIdentity('Caleb')">👨 I am Caleb</button>
+            <button class="identity-btn" onclick="selectIdentity('Caroline')">👩 I am Caroline</button>
+        </div>
+    </div>
+
     <!-- Main App -->
     <div id="app">
         <header>
             <h1>💕 Our Space</h1>
             <div class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#memories">Memories</a>
+                <a onclick="showSection('feed')">Home</a>
+                <a onclick="showSection('gallery')">Gallery</a>
             </div>
             <div class="real-time" id="clock">00:00:00</div>
         </header>
 
-        <main>
-            <!-- Profiles Section -->
-            <div class="profiles">
-                <!-- Left: Caleb -->
-                <div class="profile">
-                    <!-- User image for Caleb -->
-                    <img src="./caleb.png" alt="Caleb">
-                    <h3>Caleb</h3>
-                    <div id="status-Caleb" class="status-indicator">Offline ⚪</div>
-                    <div class="contact-actions">
-                        <a href="https://wa.me/0112199055" target="_blank" class="contact-btn wa-btn">WhatsApp</a>
-                        <a href="tel:+254112199055" class="contact-btn call-btn">Call</a>
+        <main id="main-content">
+            <div id="profile-area" class="profile-container"></div>
+
+            <div id="feed-section">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <div id="reply-preview">
+                        <span id="reply-text"></span>
+                        <span class="close-reply" onclick="cancelReply()">✕</span>
                     </div>
-                </div>
-
-                <div class="heart-center">❤️</div>
-
-                <!-- Right: Caroline -->
-                <div class="profile">
-                    <!-- User image for Caroline -->
-                    <img src="./caroline.png" alt="Caroline">
-                    <h3>Caroline</h3>
-                    <div id="status-Caroline" class="status-indicator">Offline ⚪</div>
-                    <div class="contact-actions">
-                        <a href="https://wa.me/0704229334" target="_blank" class="contact-btn wa-btn">WhatsApp</a>
-                        <a href="tel:+254704229334" class="contact-btn call-btn">Call</a>
+                    <textarea id="postContent" rows="3" placeholder="Write to your love..." oninput="handleTyping()"></textarea>
+                    
+                    <div class="media-actions">
+                        <button class="action-btn" onclick="createTextPost()">📝 Post</button>
+                        <button class="action-btn secondary" onclick="document.getElementById('mediaInput').click()">📷 Media</button>
+                        <button class="action-btn secondary" id="recordBtn" onclick="toggleAudioRecording()">🎙️ Audio</button>
                     </div>
+                    <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" onchange="uploadMedia()">
+                </div>
+
+                <div class="feed" id="postsContainer">
+                    <div style="text-align:center; padding: 20px;">Loading our memories... 💕</div>
                 </div>
             </div>
 
-            <!-- Create Post -->
-            <div class="create-post">
-                <div class="author-selector">
-                    <button class="author-btn active" onclick="setAuthor('Caleb')">👨 Caleb</button>
-                    <button class="author-btn" onclick="setAuthor('Caroline')">👩 Caroline</button>
-                </div>
-                <textarea id="postContent" rows="3" placeholder="What's on your mind?"></textarea>
-
-                <div class="media-actions">
-                    <button class="action-btn" onclick="createTextPost()">📝 Share Text</button>
-
-                    <button class="action-btn secondary" onclick="document.getElementById('mediaInput').click()">
-                        📷/🎥 Upload Media
-                    </button>
-                    <!-- Audio Recorder -->
-                    <button class="action-btn secondary" id="recordBtn" onclick="toggleAudioRecording()">
-                        🎙️ Record Audio
-                    </button>
-                </div>
-                <!-- Universal Media Input -->
-                <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" onchange="uploadMedia()">
-            </div>
-
-            <!-- Feed -->
-            <div class="feed" id="postsContainer">
-                <div style="text-align:center; padding: 20px;">Loading our memories... 💕</div>
-            </div>
+            <div id="gallery-section"></div>
         </main>
 
         <footer>
@@ -469,263 +411,200 @@
         </footer>
     </div>
 
-    <!-- Favicon code added nicely -->
-    <!-- The user wanted "favicorn of love", so we inject a heart emoji favicon via JS -->
     <script>
-        const svgFavicon = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💖</text></svg>`;
-        const link = document.createElement('link');
-        link.rel = 'icon';
-        link.href = svgFavicon;
-        document.head.appendChild(link);
-    </script>
-
-    <script>
-        // PWA Setup
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(reg => {
-                    console.log('Service Worker registered');
-                });
-            });
-        }
-
-        // Configuration
         const API_URL = 'https://couples-backend-afta.onrender.com';
-
-        let currentAuthor = 'Caleb';
-
-        // --- Authentication ---
-        const loginScreen = document.getElementById('login-screen');
-        const appScreen = document.getElementById('app');
-
-        if (sessionStorage.getItem('authenticated') === 'true') {
-            showApp();
-        }
+        let currentAuthor = '';
+        let replyToId = null;
+        let isUserTyping = false;
+        let typingTimeout;
 
         function checkPassword() {
             const pwd = document.getElementById('passwordId').value;
             if (pwd === 'MyLove') {
                 sessionStorage.setItem('authenticated', 'true');
                 sessionStorage.setItem('password', pwd);
-                showApp();
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('identity-screen').classList.remove('hidden');
+            } else { alert('Wrong password! 💕'); }
+        }
+
+        function selectIdentity(name) {
+            currentAuthor = name;
+            sessionStorage.setItem('userName', name);
+            document.getElementById('identity-screen').classList.add('hidden');
+            document.getElementById('app').style.display = 'flex';
+            setupProfile();
+            loadPosts();
+            startPolling();
+        }
+
+        if (sessionStorage.getItem('userName')) {
+            currentAuthor = sessionStorage.getItem('userName');
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app').style.display = 'flex';
+            setupProfile();
+            loadPosts();
+            startPolling();
+        }
+
+        function setupProfile() {
+            const profileArea = document.getElementById('profile-area');
+            const isCaleb = currentAuthor === 'Caleb';
+            const opponentName = isCaleb ? 'Caroline' : 'Caleb';
+            const opponentImg = isCaleb ? './caroline.png' : './caleb.png';
+            const opponentPhone = isCaleb ? '+254704229334' : '+254112199055';
+
+            profileArea.innerHTML = `
+                <div class="profile" style="position: relative;">
+                    <img src="${opponentImg}" alt="${opponentName}">
+                    <div id="status-${opponentName}" class="status-indicator">Offline ⚪</div>
+                    <div class="quick-call-actions">
+                        <a href="tel:${opponentPhone}" class="call-icon icon-phone" title="Call"><i class="fas fa-phone"></i></a>
+                        <a href="https://wa.me/${opponentPhone.replace('+','')}" target="_blank" class="call-icon icon-video" title="Video Call"><i class="fas fa-video"></i></a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleTyping() {
+            if (!isUserTyping) {
+                isUserTyping = true;
+                sendPing(true);
+            }
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isUserTyping = false;
+                sendPing(false);
+            }, 3000);
+        }
+
+        async function sendPing(typing = false) {
+            try {
+                await fetch(`${API_URL}/ping?author=${currentAuthor}&typing=${typing}`, { 
+                    method: 'POST', 
+                    headers: getAuthHeaders() 
+                });
+            } catch (e) {}
+        }
+
+        function showSection(section) {
+            if (section === 'gallery') {
+                document.getElementById('feed-section').style.display = 'none';
+                document.getElementById('gallery-section').style.display = 'grid';
+                loadGallery();
             } else {
-                alert('Wrong password! 💕');
+                document.getElementById('feed-section').style.display = 'block';
+                document.getElementById('gallery-section').style.display = 'none';
             }
         }
 
-        function showApp() {
-            loginScreen.classList.add('hidden');
-            setTimeout(() => {
-                loginScreen.style.display = 'none';
-                appScreen.style.display = 'flex';
-                loadPosts();
-            }, 500);
-        }
-
-        function getAuthHeaders() {
-            return { 'Authorization': 'Bearer ' + sessionStorage.getItem('password') };
-        }
-
-        // --- Real-time Clock ---
         function updateClock() {
-            const now = new Date();
-            // Using precise local device time without offset
-            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const timeString = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             document.getElementById('clock').innerText = timeString;
         }
         setInterval(updateClock, 1000);
-        updateClock();
 
-        // --- Post creation ---
-        function setAuthor(author) {
-            currentAuthor = author;
-            document.querySelectorAll('.author-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
+        function getAuthHeaders() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('password') }; }
 
         async function createTextPost() {
-            const content = document.getElementById('postContent').value;
+            let content = document.getElementById('postContent').value;
             if (!content.trim()) return alert('Please write something!');
-            try {
-                const res = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
-                    method: 'POST',
-                    headers: getAuthHeaders()
-                });
-                if (res.ok) {
-                    document.getElementById('postContent').value = '';
-                    loadPosts();
-                }
-            } catch (e) {
-                console.error(e);
-                alert('Connection error. Is the backend running?');
+            if (replyToId) content = `↪️ Replied: ${content}`;
+            
+            const res = await fetch(`${API_URL}/post?content=${encodeURIComponent(content)}&author=${currentAuthor}`, {
+                method: 'POST', headers: getAuthHeaders()
+            });
+            if (res.ok) {
+                document.getElementById('postContent').value = '';
+                cancelReply();
+                loadPosts();
             }
+        }
+
+        async function loadPosts() {
+            const res = await fetch(`${API_URL}/posts`, { headers: getAuthHeaders() });
+            const posts = await res.json();
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = posts.map(post => {
+                let mediaHtml = '';
+                if (post.image_url) {
+                    const url = `${API_URL}${post.image_url}`;
+                    if (post.media_type === 'video') mediaHtml = `<video src="${url}" class="post-video" controls></video>`;
+                    else if (post.media_type === 'audio') mediaHtml = `<audio src="${url}" class="post-audio" controls></audio>`;
+                    else mediaHtml = `<img src="${url}" class="post-media">`;
+                }
+                return `
+                <div class="post" onmousedown="touchStart(event, '${post.id}', '${post.content.substring(0,30)}')" onmouseup="touchEnd(event)">
+                    <div class="post-header">
+                        <span class="post-author">${post.author === 'Caleb' ? '👨 Caleb' : '👩 Caroline'}</span>
+                        <span>${new Date(post.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    ${mediaHtml}
+                </div>`;
+            }).join('');
         }
 
         async function uploadMedia() {
             const file = document.getElementById('mediaInput').files[0];
             if (!file) return;
-            const content = document.getElementById('postContent').value || "Shared an update!";
             const formData = new FormData();
             formData.append('author', currentAuthor);
-            formData.append('content', content);
+            formData.append('content', "Shared a moment! ❤️");
             formData.append('media', file);
-
-            try {
-                const res = await fetch(`${API_URL}/upload-media`, {
-                    method: 'POST',
-                    headers: getAuthHeaders(),
-                    body: formData
-                });
-                if (res.ok) {
-                    document.getElementById('postContent').value = '';
-                    document.getElementById('mediaInput').value = '';
-                    loadPosts();
-                }
-            } catch (e) {
-                console.error(e);
-                alert('Upload failed.');
-            }
+            await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: getAuthHeaders(), body: formData });
+            loadPosts();
         }
 
-        // --- Audio Recording Logic ---
-        let mediaRecorder;
-        let audioChunks = [];
-        let isRecording = false;
-
+        // --- Audio Logic ---
+        let mediaRecorder; let audioChunks = [];
         async function toggleAudioRecording() {
             const btn = document.getElementById('recordBtn');
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.start();
-                    isRecording = true;
-                    btn.innerHTML = '🛑 Stop Recording';
-                    btn.style.background = '#ff0000';
-                    audioChunks = [];
-                    mediaRecorder.addEventListener("dataavailable", event => {
-                        audioChunks.push(event.data);
-                    });
-                    mediaRecorder.addEventListener("stop", () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        uploadRecordedAudio(audioBlob);
-                    });
-                } catch (e) {
-                    alert("Microphone permission denied or not supported.");
-                }
-            } else {
-                mediaRecorder.stop();
-                isRecording = false;
-                btn.innerHTML = '🎙️ Record Audio';
-                btn.style.background = 'var(--primary)';
-            }
+            if (btn.innerHTML.includes('🎙️')) {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                btn.innerHTML = '🛑 Stop';
+                btn.style.background = 'red';
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    uploadVoice(blob);
+                    btn.innerHTML = '🎙️ Audio';
+                    btn.style.background = 'var(--secondary)';
+                };
+            } else { mediaRecorder.stop(); }
+        }
+        async function uploadVoice(blob) {
+            const fd = new FormData();
+            fd.append('author', currentAuthor); fd.append('content', "Voice message 🎤"); fd.append('media', blob, "voice.webm");
+            await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: getAuthHeaders(), body: fd });
+            loadPosts();
         }
 
-        async function uploadRecordedAudio(blob) {
-            const content = document.getElementById('postContent').value || "Voice message 🎤";
-            const formData = new FormData();
-            formData.append('author', currentAuthor);
-            formData.append('content', content);
-            formData.append('media', blob, "voice.webm");
-
-            try {
-                const res = await fetch(`${API_URL}/upload-media`, {
-                    method: 'POST',
-                    headers: getAuthHeaders(),
-                    body: formData
-                });
-                if (res.ok) {
-                    document.getElementById('postContent').value = '';
-                    loadPosts();
-                }
-            } catch (e) {
-                console.error(e);
-                alert('Audio upload failed.');
-            }
-        }
-
-        // --- Feed Loading ---
-        async function loadPosts() {
-            if (sessionStorage.getItem('authenticated') !== 'true') return;
-            try {
-                const res = await fetch(`${API_URL}/posts`, { headers: getAuthHeaders() });
-                const posts = await res.json();
-                const container = document.getElementById('postsContainer');
-                if (posts.length === 0) {
-                    container.innerHTML = '<div style="text-align:center;">No memories yet. Share one!</div>';
-                    return;
-                }
-
-                container.innerHTML = posts.map(post => {
-                    let mediaHtml = '';
-                    if (post.image_url) {
-                        const url = `${API_URL}${post.image_url}`;
-                        if (post.media_type === 'video') {
-                            mediaHtml = `<video src="${url}" class="post-video" controls></video>`;
-                        } else if (post.media_type === 'audio') {
-                            mediaHtml = `<audio src="${url}" class="post-audio" controls></audio>`;
-                        } else {
-                            mediaHtml = `<img src="${url}" class="post-media">`;
-                        }
-                    }
-
-                    return `
-                    <div class="post">
-                        <div class="post-header">
-                            <span class="post-author">${post.author === 'system' ? 'System' : (post.author === 'Caleb' ? '👨 Caleb' : '👩 Caroline')}</span>
-                            <span>${new Date(post.timestamp).toLocaleString()}</span>
-                        </div>
-                        <div class="post-content">${post.content}</div>
-                        ${mediaHtml}
-                    </div>
-                `}).join('');
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // Optional: Auto fetch every 10s
-        setInterval(loadPosts, 10000);
-
-        // --- Online Status Tracking ---
         async function fetchStatus() {
-            if (sessionStorage.getItem('authenticated') !== 'true') return;
-            try {
-                // Tell the backend we are online
-                await fetch(`${API_URL}/ping?author=${currentAuthor}`, {
-                    method: 'POST',
-                    headers: getAuthHeaders()
-                });
-
-                // Get the online status for both
-                const res = await fetch(`${API_URL}/status`, { headers: getAuthHeaders() });
-                const statuses = await res.json();
-
-                for (let user of ['Caleb', 'Caroline']) {
-                    const el = document.getElementById(`status-${user}`);
-                    if (el) {
-                        if (statuses[user]) {
-                            el.innerHTML = 'Ready 🟢';
-                            el.classList.add('status-online');
-                        } else {
-                            el.innerHTML = 'Offline ⚪';
-                            el.classList.remove('status-online');
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to update status', e);
+            sendPing(isUserTyping);
+            const res = await fetch(`${API_URL}/status`, { headers: getAuthHeaders() });
+            const data = await res.json();
+            const other = currentAuthor === 'Caleb' ? 'Caroline' : 'Caleb';
+            const el = document.getElementById(`status-${other}`);
+            if (el) {
+                if (data.typing && data.typing[other]) { el.innerHTML = 'Typing... ✍️'; el.style.color = 'var(--primary)'; }
+                else if (data[other]) { el.innerHTML = 'Ready 🟢'; el.style.color = '#25D366'; }
+                else { el.innerHTML = 'Offline ⚪'; el.style.color = '#888'; }
             }
         }
 
-        // Fetch status every 5 seconds
-        setInterval(fetchStatus, 5000);
-
-        // Initial fetch call
-        if (sessionStorage.getItem('authenticated') === 'true') {
-            fetchStatus();
+        let startX = 0;
+        function touchStart(e, id, text) { startX = e.clientX || e.touches[0].clientX; }
+        function touchEnd(e) { 
+            const endX = e.clientX || e.changedTouches[0].clientX;
+            // Removed reply logic for simplicity unless requested
         }
+        function cancelReply() { replyToId = null; document.getElementById('reply-preview').style.display = 'none'; }
+
+        function startPolling() { setInterval(loadPosts, 10000); setInterval(fetchStatus, 3000); }
     </script>
 </body>
-
 </html>

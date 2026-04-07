@@ -61,19 +61,22 @@ def root():
 
 # Online status tracking
 user_last_seen = {"Caleb": None, "Caroline": None}
+user_is_typing = {"Caleb": False, "Caroline": False}
 
 @app.post("/ping", dependencies=[Depends(verify_token)])
-def ping(author: str):
+def ping(author: str, typing: bool = False):
     user_last_seen[author] = datetime.now()
+    user_is_typing[author] = typing
     return {"status": "ok"}
 
 @app.get("/status", dependencies=[Depends(verify_token)])
 def get_user_status():
-    status = {"Caleb": False, "Caroline": False}
+    status = {"Caleb": False, "Caroline": False, "typing": {"Caleb": False, "Caroline": False}}
     now = datetime.now()
     for user, last_seen in user_last_seen.items():
         if last_seen and (now - last_seen).total_seconds() < 15:
             status[user] = True
+            status["typing"][user] = user_is_typing[user]
     return status
 
 @app.get("/posts", dependencies=[Depends(verify_token)])
