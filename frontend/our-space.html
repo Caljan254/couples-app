@@ -277,8 +277,8 @@
                 let media = p.image_url ? `<img src="${API}${p.image_url}" class="post-media" onclick="window.open('${API}${p.image_url}')">` : '';
                 return `
                 <div class="post ${isSent ? 'post-sent':'post-received'}" 
-                     onmousedown="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" 
-                     ontouchstart="onSwipe(event, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
+                     onmousedown="onSwipe(event, this, '${p.author}', '${p.content.replace(/'/g, "\\'")}')" 
+                     ontouchstart="onSwipe(event, this, '${p.author}', '${p.content.replace(/'/g, "\\'")}')">
                     ${reply}
                     <div>${p.content}</div>
                     ${media}
