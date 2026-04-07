@@ -598,6 +598,74 @@
             transform: scale(1.03);
         }
 
+        /* ── WhatsApp Context Menu ── */
+        .context-menu {
+            position: fixed;
+            background: #232d36; /* WhatsApp Dark Mode Menu color */
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 2000;
+            width: 190px;
+            padding: 8px 0;
+            display: none;
+            flex-direction: column;
+            animation: menu-pop .1s ease-out;
+        }
+        @keyframes menu-pop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .menu-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background .15s;
+        }
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .menu-item i {
+            width: 18px;
+            opacity: 0.7;
+            font-size: 0.95rem;
+        }
+        .menu-item.danger {
+            color: #ff5c5c;
+        }
+        .menu-item.danger i {
+            color: #ff5c5c;
+        }
+
+        /* Dropdown chevron on bubble */
+        .bubble-menu-btn {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0,0,0,0.25);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity .15s;
+            z-index: 5;
+        }
+        .post:hover .bubble-menu-btn {
+            opacity: 1;
+        }
+        .post-sent .bubble-menu-btn:hover {
+            color: rgba(0,0,0,0.6);
+        }
+        .post-received .bubble-menu-btn:hover {
+            color: var(--primary);
+        }
+
         /* Call items */
         .call-item {
             background: white;
@@ -896,6 +964,20 @@
 
     <!-- Main App -->
     <div id="app">
+        <!-- WhatsApp Context Menu -->
+        <div id="msgMenu" class="context-menu">
+            <div class="menu-item" onclick="menuAction('reply')"><i class="fas fa-reply"></i> Reply</div>
+            <div class="menu-item" onclick="menuAction('info')"><i class="fas fa-info-circle"></i> Message info</div>
+            <div class="menu-item" onclick="menuAction('copy')"><i class="fas fa-copy"></i> Copy</div>
+            <div class="menu-item" onclick="menuAction('react')"><i class="fas fa-smile"></i> React</div>
+            <div class="menu-item" onclick="menuAction('download')"><i class="fas fa-download"></i> Download</div>
+            <div class="menu-item" onclick="menuAction('forward')"><i class="fas fa-share"></i> Forward</div>
+            <div class="menu-item" onclick="menuAction('pin')"><i class="fas fa-thumbtack"></i> Pin</div>
+            <div class="menu-item" onclick="menuAction('star')"><i class="fas fa-star"></i> Star</div>
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:4px 0;">
+            <div class="menu-item danger" onclick="menuAction('delete')"><i class="fas fa-trash"></i> Delete</div>
+        </div>
+
         <header>
             <h1>💕 Love</h1>
             <div class="nav-links">
@@ -984,9 +1066,9 @@
 
         let me = '', key = '', callApi = null;
         let isTyping = false, typingTimer = null;
-        let repData = null;
+        let repData = null, menuMsg = null;
         let mic = null, micChunks = [];
-        let allPosts = [];
+        let allPosts = [], lastPostCount = 0;
 
         /* ─── AUTH ───────────────────────────────────── */
         function login() {
@@ -995,6 +1077,7 @@
                 key = v; sessionStorage.setItem('key', v);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
+                if (Notification.permission !== "granted") Notification.requestPermission();
             } else {
                 document.getElementById('pass-in').style.borderColor = '#e53935';
                 setTimeout(() => document.getElementById('pass-in').style.borderColor = '', 800);
@@ -1132,9 +1215,28 @@
                 const res = await fetch(`${API}/posts`, { headers: auth() });
                 const raw = await res.json();
                 allPosts = raw.sort((a, b) => new Date(fixTs(a.timestamp)) - new Date(fixTs(b.timestamp)));
+                
+                // Notifications for new messages
+                if (lastPostCount > 0 && allPosts.length > lastPostCount) {
+                    const latest = allPosts[allPosts.length - 1];
+                    if (latest.author !== me) {
+                        tryShowNotify(latest);
+                    }
+                }
+                lastPostCount = allPosts.length;
+
                 renderFeed(toBeBottom);
                 loadGallery();
             } catch (e) { console.error(e); }
+        }
+
+        function tryShowNotify(p) {
+            if (Notification.permission === "granted" && document.visibilityState !== "visible") {
+                new Notification(`New message from ${getAlias(p.author)}`, {
+                    body: p.content,
+                    icon: me === 'Caleb' ? './caroline.png' : './caleb.png'
+                });
+            }
         }
 
         function renderFeed(toBeBottom = false) {
@@ -1192,6 +1294,9 @@
                         <div class="msg-swipe-wrap" id="swipe-${idx}">
                             <div class="swipe-icon" id="sicon-${idx}"><i class="fas fa-reply"></i></div>
                             <div class="post ${isSent ? 'post-sent' : 'post-received'}" id="bubble-${idx}">
+                                <div class="bubble-menu-btn" onclick="openMenu(event, ${idx})">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
                                 ${quoteHtml}
                                 <div class="bubble-body">
                                     ${senderLabel}
@@ -1322,6 +1427,50 @@
             repData = null;
             document.getElementById('reply-panel').style.display = 'none';
         }
+
+        /* ─── CONTEXT MENU ───────────────────────────── */
+        function openMenu(e, idx) {
+            e.stopPropagation();
+            menuMsg = allPosts[idx];
+            const menu = document.getElementById('msgMenu');
+            menu.style.display = 'flex';
+            
+            // Positioning
+            let x = e.clientX, y = e.clientY;
+            if (x + 200 > window.innerWidth) x -= 200;
+            if (y + 350 > window.innerHeight) y -= 350;
+            
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
+        }
+
+        function closeMenu() {
+            document.getElementById('msgMenu').style.display = 'none';
+        }
+
+        async function menuAction(type) {
+            const p = menuMsg;
+            closeMenu();
+            if (!p) return;
+
+            if (type === 'reply') {
+                setRep(p.author, p.content);
+            } else if (type === 'copy') {
+                navigator.clipboard.writeText(p.content);
+                alert('Copied to clipboard! 📋');
+            } else if (type === 'delete') {
+                if (confirm('Delete this message for everyone?')) {
+                    await fetch(`${API}/post/${p.id}`, { method: 'DELETE', headers: auth() });
+                    loadFeed();
+                }
+            } else if (type === 'info') {
+                alert(`Sent by: ${getAlias(p.author)}\nAt: ${new Date(fixTs(p.timestamp)).toLocaleString()}\nID: ${p.id}`);
+            } else {
+                alert('This feature is coming soon! ✨');
+            }
+        }
+
+        document.addEventListener('click', closeMenu);
 
         /* ─── SEND POST ──────────────────────────────── */
         async function post() {

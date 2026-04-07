@@ -8,6 +8,7 @@ import uuid
 import os
 from typing import List, Optional
 from pydantic import BaseModel
+import json
 
 app = FastAPI(title="Couple's Sharing App")
 
@@ -45,9 +46,30 @@ class Post(BaseModel):
     reply_to_content: Optional[str] = None
     reply_to_author: Optional[str] = None
 
-# Store posts and calls in memory
+# Store posts and calls in memory with file persistence
+DATA_FILE = "data.json"
 posts = []
 call_history = []
+
+def save_data():
+    with open(DATA_FILE, "w") as f:
+        json.dump({
+            "posts": [p.dict() if hasattr(p, 'dict') else p for p in posts],
+            "calls": [c.dict() if hasattr(c, 'dict') else c for c in call_history]
+        }, f)
+
+def load_data():
+    global posts, call_history
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, "r") as f:
+                d = json.load(f)
+                posts = [Post(**p) for p in d.get("posts", [])]
+                call_history = [CallLog(**c) for c in d.get("calls", [])]
+        except Exception as e:
+            print(f"Error loading data: {e}")
+
+load_data()
 
 class CallLog(BaseModel):
     id: str
@@ -67,6 +89,7 @@ def log_call(caller: str, type: str):
         timestamp=datetime.now().isoformat()
     )
     call_history.append(new_log)
+    save_data()
     return new_log
 
 @app.get("/calls", dependencies=[Depends(verify_token)])
@@ -116,6 +139,7 @@ def create_post(content: str, author: str, reply_to_content: Optional[str] = Non
         reply_to_author=reply_to_author
     )
     posts.append(new_post)
+    save_data()
     return new_post
 
 @app.post("/upload-media", dependencies=[Depends(verify_token)])
@@ -146,6 +170,7 @@ async def upload_media(author: str, content: str, media: UploadFile = File(...))
     # Monkey-patching the post for the frontend (the frontend will rely on media_type if we pass it, let's add it to Post)
     setattr(new_post, 'media_type', media_type)
     posts.append(new_post)
+    save_data()
     
     # Return dict with media_type included
     post_dict = new_post.dict()
@@ -157,6 +182,7 @@ def add_heart(post_id: str):
     for post in posts:
         if post.id == post_id:
             post.hearts += 1
+            save_data()
             return {"hearts": post.hearts}
     raise HTTPException(status_code=404, detail="Post not found")
 
@@ -169,6 +195,7 @@ def add_comment(post_id: str, author: str, comment: str):
                 "comment": comment,
                 "timestamp": datetime.now().isoformat()
             })
+            save_data()
             return {"comments": post.comments}
     raise HTTPException(status_code=404, detail="Post not found")
 
@@ -178,3 +205,10 @@ def get_media(filename: str):
     if os.path.exists(filepath):
         return FileResponse(filepath)
     raise HTTPException(status_code=404, detail="Media not found")
+
+@app.delete("/post/{post_id}", dependencies=[Depends(verify_token)])
+def delete_post(post_id: str):
+    global posts
+    posts = [p for p in posts if (p.id if hasattr(p, 'id') else p['id']) != post_id]
+    save_data()
+    return {"status": "success"}
