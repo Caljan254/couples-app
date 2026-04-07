@@ -18,7 +18,7 @@
             --secondary: #ff758c;
             --dark: #1e1e24;
             --light: #fff5f7;
-            --glass: rgba(255, 255, 255, 0.9);
+            --glass: rgba(255, 255, 255, 0.85);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,35 +33,20 @@
 
         /* Screens */
         #login-screen, #identity-screen, #video-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--dark);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
-            transition: 0.3s;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--dark); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; color: white;
         }
-
         .hidden { display: none !important; }
 
         .login-box {
-            background: var(--glass);
-            padding: 40px; border-radius: 20px; text-align: center; color: var(--dark);
-            width: 90%; max-width: 400px;
+            background: var(--glass); padding: 40px; border-radius: 20px;
+            text-align: center; color: var(--dark); width: 90%; max-width: 400px;
         }
 
-        input {
-            width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--primary);
-            margin: 15px 0; outline: none;
-        }
-
-        button, .btn {
-            background: var(--primary); color: white; border: none; padding: 12px 25px;
-            border-radius: 10px; font-weight: bold; cursor: pointer; margin: 5px;
-        }
+        input { width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--primary); margin: 15px 0; outline: none; }
+        button, .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; margin: 5px; }
 
         /* App Layout */
         #app { display: none; flex-direction: column; min-height: 100vh; }
@@ -71,98 +56,70 @@
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             position: sticky; top: 0; z-index: 500;
-            white-space: nowrap; overflow-x: auto;
         }
-
-        header h1 { font-size: 1.2rem; color: var(--primary); margin-right: 15px; }
-
-        .nav-links { display: flex; gap: 15px; font-size: 0.9rem; align-items: center; }
+        header h1 { font-size: 1.3rem; color: var(--primary); }
+        .nav-links { display: flex; gap: 15px; }
         .nav-links a { text-decoration: none; color: #555; font-weight: 600; cursor: pointer; }
-        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
-
-        .real-time { font-size: 0.9rem; font-weight: bold; color: var(--primary); margin-left: 15px; }
+        .nav-links a.active { color: var(--primary); }
+        .real-time { font-size: 1rem; font-weight: bold; color: var(--primary); }
 
         main { flex: 1; padding: 20px; width: 100%; max-width: 700px; margin: 0 auto; }
 
         /* Profile Area */
         .profile-container { display: flex; justify-content: center; margin-bottom: 25px; }
         .profile {
-            background: white; padding: 20px; border-radius: 20px; position: relative;
+            background: var(--glass); padding: 20px; border-radius: 20px; position: relative;
             width: 100%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-        .profile img {
-            width: 100%; max-width: 250px; border-radius: 15px;
-            object-fit: contain; background: #fdfdfd; border: 3px solid var(--primary);
-        }
-        .status-indicator {
-            position: absolute; top: 10px; right: 10px; padding: 5px 12px;
-            background: white; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            font-weight: bold; font-size: 0.8rem;
-        }
-        .quick-call-actions {
-            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 15px;
-        }
-        .call-icon {
-            width: 45px; height: 45px; border-radius: 50%; background: white;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); text-decoration: none;
-        }
+        .profile img { width: 100%; max-width: 280px; border-radius: 20px; object-fit: contain; border: 4px solid var(--primary); }
+        .status-indicator { position: absolute; top: 10px; right: 10px; padding: 5px 12px; background: white; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .quick-call-actions { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
+        .call-icon { width: 45px; height: 45px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
         /* Compose */
-        .create-post {
-            background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        #reply-preview {
-            background: #fdf2f4; border-left: 4px solid var(--primary);
-            padding: 8px; margin-bottom: 10px; border-radius: 4px; display: none;
-        }
-        textarea {
-            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee;
-            background: #fafafa; font-family: inherit; font-size: 1rem; margin-bottom: 10px;
-        }
+        .create-post { background: var(--glass); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        #reply-panel { background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary); padding: 10px; margin-bottom: 15px; border-radius: 5px; display: none; }
+        textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 1rem; margin-bottom: 10px; }
 
-        /* Feed & Interactions */
+        /* Custom Emoji Board Styled like WhatsApp */
+        #emoji-board {
+            display: none; background: white; border-radius: 12px; padding: 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); margin-bottom: 10px;
+            max-height: 350px; flex-direction: column;
+        }
+        .emoji-tabs { display: flex; background: #f5f5f5; border-radius: 12px 12px 0 0; padding: 10px; gap: 15px; justify-content: center; }
+        .emoji-tab { cursor: pointer; opacity: 0.5; font-size: 1.2rem; }
+        .emoji-tab.active { opacity: 1; border-bottom: 2px solid var(--primary); }
+        .emoji-list { padding: 15px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; font-size: 1.8rem; height: 250px; overflow-y: auto; text-align: center; }
+        .emoji-item { cursor: pointer; transition: 0.1s; display: inline-block; }
+        .emoji-item:active { transform: scale(1.3); }
+
+        /* Feed & WhatsApp Replies */
         .feed { display: flex; flex-direction: column; gap: 15px; }
         .post {
-            background: white; border-radius: 18px; padding: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
-            position: relative; transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            touch-action: pan-y;
+            background: var(--glass); border-radius: 20px; padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s;
+            cursor: pointer; touch-action: pan-x;
         }
-        .post-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+        .post-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-bottom: 8px; }
         .post-author { font-weight: bold; color: var(--primary); }
-        .post-content { font-size: 1.05rem; margin-bottom: 10px; word-wrap: break-word; }
-        .post-media { max-width: 100%; border-radius: 12px; margin-top: 5px; display: block; }
-        audio { width: 100%; height: 40px; margin-top: 5px; }
-        video { width: 100%; border-radius: 12px; margin-top: 5px; }
-
-        /* Reply indicator on swipe */
-        .post::after {
-            content: "\f3e5"; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
-            font-size: 20px; color: var(--primary); opacity: 0; transition: 0.2s;
-        }
-
-        /* Sections */
-        .section { display: none; }
-        #feed-section.active, #gallery-section.active, #calls-section.active { display: block; }
-
-        /* Gallery/Calls Grid */
-        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-        .gallery-item { width: 100%; aspect-ratio: 1; border-radius: 12px; object-fit: cover; background: #eee; }
         
-        .call-log-item {
-            background: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 8px;
+        .quoted-box {
+            background: rgba(0,0,0,0.05); border-left: 4px solid var(--primary);
+            padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem;
         }
-        .call-log-icon { font-size: 1.5rem; color: var(--primary); }
+        .quoted-author { font-weight: bold; display: block; color: var(--primary); margin-bottom: 2px; }
+
+        .post-media { max-width: 100%; border-radius: 12px; margin-top: 10px; }
+
+        /* Navigation Sections */
+        .section { display: none; }
+        .section.active { display: block; }
 
         /* Overlays */
         #video-overlay { background: black; z-index: 2000; display: none; }
-        #jitsi-container { width: 100%; height: 100%; }
-        .close-video-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; }
+        #jitsi-box { width: 100%; height: 100%; }
+        .hangup-btn { position: absolute; top: 20px; right: 20px; z-index: 2100; background: red; padding: 10px 20px; border-radius: 12px; }
 
         footer { background: var(--dark); color: white; text-align: center; padding: 15px; font-size: 0.8rem; }
     </style>
@@ -173,296 +130,318 @@
     <div id="login-screen">
         <div class="login-box">
             <h2>💕 Secret Password</h2>
-            <input type="password" id="passwordId" placeholder="...">
+            <input type="password" id="entry-pass" placeholder="...">
             <button onclick="login()">Enter</button>
         </div>
     </div>
 
     <div id="identity-screen" class="hidden">
         <div class="login-box">
-            <h2>Select Your Identity</h2>
-            <button class="identity-btn" onclick="selectMe('Caleb')">👨 Caleb</button>
-            <button class="identity-btn" onclick="selectMe('Caroline')">👩 Caroline</button>
+            <h2>Who are you?</h2>
+            <button onclick="selectUser('Caleb')">👨 Caleb</button>
+            <button onclick="selectUser('Caroline')" style="margin-top:10px">👩 Caroline</button>
         </div>
     </div>
 
     <div id="video-overlay">
-        <button class="close-video-btn" onclick="hangup()">Hangup 📞</button>
-        <div id="jitsi-container"></div>
+        <button class="hangup-btn" onclick="endCall()">Hangup 📞</button>
+        <div id="jitsi-box"></div>
     </div>
 
     <div id="app">
         <header>
             <h1>💕 Love</h1>
             <div class="nav-links">
-                <a onclick="show('feed')" id="nav-feed" class="active">Home</a>
-                <a onclick="show('gallery')" id="nav-gallery">Gallery</a>
-                <a onclick="show('calls')" id="nav-calls">Calls</a>
+                <a onclick="setMenu('feed')" id="n-feed" class="active">Home</a>
+                <a onclick="setMenu('gallery')" id="n-gallery">Gallery</a>
+                <a onclick="setMenu('calls')" id="n-calls">Calls</a>
             </div>
             <div class="real-time" id="clock">00:00:00</div>
         </header>
 
         <main>
-            <!-- Top Partner Bio -->
-            <div id="profile-area" class="profile-container"></div>
+            <div id="profile-zone" class="profile-container"></div>
 
-            <!-- Feed Section -->
-            <div id="feed-section" class="section active">
+            <div id="feed-sec" class="section active">
                 <div class="create-post">
-                    <div id="reply-preview">
-                        <span id="reply-label" style="font-size:0.8rem; font-weight:bold; color:var(--primary)">Replying to:</span><br>
-                        <span id="reply-text" style="font-size:0.9rem"></span>
-                        <span style="float:right; cursor:pointer" onclick="cancelReply()">✕</span>
+                    <div id="reply-panel">
+                        <span id="rep-auth" style="font-weight:bold; color:var(--primary); font-size:0.8rem"></span><br>
+                        <span id="rep-txt" style="font-size:0.85rem; color:#666"></span>
+                        <span style="float:right; cursor:pointer" onclick="closeRep()">✕</span>
                     </div>
-                    <textarea id="postContent" rows="3" placeholder="Write something sweet..." oninput="pushTyping()"></textarea>
-                    <div style="display:flex; justify-content:space-between">
+                    <textarea id="msgIn" rows="3" placeholder="Write something sweet..." oninput="tellTyping()"></textarea>
+                    
+                    <!-- New WhatsApp Styled Emoji Board -->
+                    <div id="emoji-board">
+                        <div class="emoji-tabs">
+                            <span class="emoji-tab active" onclick="switchCategory('faces')">😊</span>
+                            <span class="emoji-tab" onclick="switchCategory('hearts')">❤️</span>
+                            <span class="emoji-tab" onclick="switchCategory('others')">🌸</span>
+                            <span class="emoji-tab" onclick="switchCategory('more')">🏳️</span>
+                        </div>
+                        <div id="emoji-list" class="emoji-list"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <button onclick="createText()"><i class="fas fa-paper-plane"></i> Send</button>
+                            <button onclick="postText()">Send</button>
+                            <span id="emoji-trigger" style="font-size:1.8rem; margin-left:15px; cursor:pointer" onclick="toggleEmojiBoard()">😊</span>
                         </div>
                         <div>
-                            <button class="btn secondary" onclick="document.getElementById('mediaInput').click()"><i class="fas fa-camera"></i></button>
-                            <button class="btn secondary" id="micBtn" onclick="toggleMic()"><i class="fas fa-microphone"></i></button>
+                            <button class="btn secondary" onclick="document.getElementById('fileIn').click()"><i class="fas fa-camera"></i></button>
+                            <button class="btn secondary" id="voiceBtn" onclick="handleVoice()"><i class="fas fa-microphone"></i></button>
                         </div>
                     </div>
-                    <input type="file" id="mediaInput" accept="image/*,video/*,audio/*" onchange="upload()">
+                    <input type="file" id="fileIn" class="hidden" accept="image/*,video/*" onchange="uploadFile()">
                 </div>
-                <div class="feed" id="postsContainer"></div>
+                <div class="feed" id="feedCont"></div>
             </div>
 
-            <div id="gallery-section" class="section">
-                <div class="grid-view" id="galleryContainer"></div>
+            <div id="gallery-sec" class="section">
+                <div id="gallCont" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;"></div>
             </div>
 
-            <div id="calls-section" class="section">
-                <div id="callsContainer"></div>
+            <div id="calls-sec" class="section">
+                <div id="callsCont"></div>
             </div>
         </main>
 
-        <footer>Together forever since 2024 ❤️</footer>
+        <footer>Since 2024 with Love ❤️</footer>
     </div>
 
     <script>
-        const API_URL = 'https://couples-backend-afta.onrender.com';
-        let me = '', pwd = '', jitsiApi = null, replyId = null, isTyping = false, typingTimer;
+        const API = 'https://couples-backend-afta.onrender.com';
+        let me = '', key = '', callApi = null, isTyping = false, timer, repData = null;
 
-        // Login Logic
+        // Custom High-Quality Emoji Database (ALL CATEGORIES)
+        const emojiCategories = {
+            faces: ["😀","😃","😄","😁","😆","😅","😂","🤣","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾"],
+            hearts: ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","💌","💏","💑","💏","👩‍❤️‍💋‍👨","👨‍❤️‍💋‍👨","👩‍❤️‍💋‍👩","👩‍❤️‍👨","👨‍❤️‍👨","👩‍❤️‍👩"],
+            others: ["🌹","🌸","🌺","🌷","🌻","🌼","🍀","💍","💎","🎁","🎈","🧸","🍷","🥂","🎂","⭐️","🌙","🌞","🌈","🦋","🍓","🍒","🍫","🍭","🍿","☕️","🍹","🍔","🍕","🍓","🍇","🍑","🍎","🥑"],
+            more: ["🏳️","🏴","🏁","🚩","🏳️‍🌈","🎌","🇦🇫","🇦🇱","🇩🇿","🇦🇸","🇦🇩","🇦🇴","🇦🇮","🇦🇶","🇦🇬","🇦🇷","🇦🇲","🇦🇼","🇦🇺","🇦🇹","🇦🇿","🇧🇸","🇧🇭","🇧🇩","🇧🇧","🇧🇾","🇧🇪","🇧🇿","🇧🇯","🇧🇲","🇧🇹","🇧🇴","🇧🇦","🇧🇼","🇧🇷","🇮🇴","🇻🇬","🇧🇳","🇧🇬","🇧🇫","🇧🇮","🇰🇭","🇨🇲","🇨🇦","🇮🇨","🇨🇻","🇧🇶","🇰🇾","🇨🇫","🇹🇩","🇨🇱","🇨🇳","🇨🇽","🇰🇪","🇰🇮","🇰🇼","🇰🇬","🇱🇦","🇱🇻","🇱🇧","🇱🇸","🇱🇷","🇱🇾","🇱🇮","🇱🇹","🇱🇺","🇲🇴","🇲🇰","🇲🇬","🇲🇼","🇲🇾","🇲🇻","🇲🇱","🇲🇹","🇲🇭","🇲🇶","🇲🇷","🇲🇺","🇾🇹","🇲🇽","🇫🇲","🇲🇩","🇲🇨","🇲🇳","🇲🇪","🇲🇸","🇲🇦","🇲🇿","🇲🇲","🇳🇦","🇳🇷","🇳🇵","🇳🇱","🇳🇨","🇳🇿","🇳🇮","🇳🇪","🇳🇬","🇳🇺","🇳🇫","🇰🇵","🇲🇵","🇳🇴","🇴🇲","🇵🇰","🇵🇼","🇵🇸","🇵🇦","🇵🇬","🇵🇾","🇵🇪","🇵🇭","🇵🇳","🇵🇱","🇵🇹","🇵🇷","🇶🇦","🇷🇪","🇷🇴","🇷🇺","🇷🇼","🇼🇸","🇸🇲","🇸🇹","🇸🇦","🇸🇳","🇸🇷","🇸🇿","🇸🇪","🇨🇭","🇸🇾","🇹🇼","🇹🇯","🇹🇿","🇹🇭","🇹🇱","🇹🇬","🇹🇰","🇹🇴","🇹🇹","🇹🇳","🇹🇷","🇹🇲","🇹🇨","🇹🇻","🇺🇬","🇺🇦","🇦🇪","🇬🇧","🇺🇸","🇺🇾","🇺🇿","🇻🇺","🇻🇦","🇻🇪","🇻🇳","🇼🇫","🇪🇭","🇾🇪","🇿🇲","🇿🇼"]
+        };
+
+        function toggleEmojiBoard() {
+            const board = document.getElementById('emoji-board');
+            if (board.style.display === 'flex') {
+                board.style.display = 'none';
+            } else {
+                switchCategory('faces');
+                board.style.display = 'flex';
+            }
+        }
+
+        function switchCategory(cat) {
+            document.querySelectorAll('.emoji-tab').forEach(t => t.classList.remove('active'));
+            const idx = Object.keys(emojiCategories).indexOf(cat);
+            document.querySelectorAll('.emoji-tab')[idx].classList.add('active');
+            
+            const list = document.getElementById('emoji-list');
+            list.innerHTML = emojiCategories[cat].map(e => `<span class="emoji-item" onclick="insertEmoji('${e}')">${e}</span>`).join('');
+        }
+
+        function insertEmoji(e) {
+            const input = document.getElementById('msgIn');
+            input.value += e;
+            input.focus();
+        }
+
+        // Standard App Logic (Login, Profile, Feed)
         function login() {
-            pwd = document.getElementById('passwordId').value;
-            if (pwd === 'MyLove') {
-                sessionStorage.setItem('pwd', pwd);
+            if (document.getElementById('entry-pass').value === 'MyLove') {
+                key = 'MyLove'; sessionStorage.setItem('key', key);
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('identity-screen').classList.remove('hidden');
             } else alert('Wrong! 💕');
         }
 
-        function selectMe(name) {
+        function selectUser(name) {
             me = name; sessionStorage.setItem('user', name);
             document.getElementById('identity-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            init();
+            start();
         }
 
-        // Auto Login
         if (sessionStorage.getItem('user')) {
-            me = sessionStorage.getItem('user'); pwd = sessionStorage.getItem('pwd');
+            me = sessionStorage.getItem('user'); key = sessionStorage.getItem('key');
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app').style.display = 'flex';
-            init();
+            start();
         }
 
-        function init() {
-            renderProfile();
-            refreshFeed();
-            setInterval(refreshFeed, 10000);
-            setInterval(refreshStatus, 4000);
+        function start() {
+            drawProfile(); getFeed();
+            // Heartbeat: Always stay "Ready" while app is open
+            setInterval(() => ping(isTyping), 3000); 
+            setInterval(getFeed, 10000);
+            setInterval(getStatus, 4000);
             setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-            setupSwipe();
         }
 
-        function renderProfile() {
+        function drawProfile() {
             const isMeC = me === 'Caleb';
             const opp = isMeC ? 'Caroline' : 'Caleb';
-            const oppImg = isMeC ? './caroline.png' : './caleb.png';
-            const oppPhone = isMeC ? '+254704229334' : '+254112199055';
-            
-            document.getElementById('profile-area').innerHTML = `
+            const img = isMeC ? './caroline.png' : './caleb.png';
+            document.getElementById('profile-zone').innerHTML = `
                 <div class="profile">
-                    <img src="${oppImg}" alt="${opp}">
+                    <img src="${img}" alt="${opp}">
                     <div id="st-${opp}" class="status-indicator">Offline ⚪</div>
                     <div class="quick-call-actions">
-                        <a onclick="doCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
-                        <a onclick="doCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
+                        <a onclick="startCall('Audio')" class="call-icon" style="color:#2563eb"><i class="fas fa-phone"></i></a>
+                        <a onclick="startCall('Video')" class="call-icon" style="color:var(--primary)"><i class="fas fa-video"></i></a>
                     </div>
                 </div>`;
         }
 
-        // Call Logic (WhatsApp Style in-app Jitsi)
-        async function doCall(type) {
+        async function startCall(t) {
             document.getElementById('video-overlay').style.display = 'flex';
-            const room = "SecretCouplesRoom_AF_2024_";
-            const options = {
-                roomName: room,
-                parentNode: document.querySelector('#jitsi-container'),
-                userInfo: { displayName: me },
-                configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: type === 'Audio' },
-                interfaceConfigOverwrite: { TOOLBAR_BUTTONS: ['microphone', 'camera', 'hangup', 'tileview'] }
+            const roomName = "TheSecretRoom_FinalVersion";
+            const ops = {
+                roomName: roomName, parentNode: document.querySelector('#jitsi-box'),
+                configOverwrite: { startWithAudioMuted: false, startWithVideoMuted: t === 'Audio' }
             };
-            jitsiApi = new JitsiMeetExternalAPI("meet.jit.si", options);
-            await fetch(`${API_URL}/log-call?caller=${me}&type=${type}`, { method: 'POST', headers: auth() });
+            callApi = new JitsiMeetExternalAPI("meet.jit.si", ops);
+            await fetch(`${API}/log-call?caller=${me}&type=${t}`, { method: 'POST', headers: auth() });
         }
 
-        function hangup() {
-            if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
+        function endCall() { 
+            if (callApi) { callApi.dispose(); callApi = null; }
             document.getElementById('video-overlay').style.display = 'none';
         }
 
-        // Core API
-        function auth() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('pwd') }; }
+        function auth() { return { 'Authorization': 'Bearer ' + sessionStorage.getItem('key') }; }
 
-        async function createText() {
-            const txt = document.getElementById('postContent').value;
-            if (!txt.trim()) return;
-            const fullContent = replyId ? `↪️ Replying: "${replyId}" - ${txt}` : txt;
-            await fetch(`${API_URL}/post?content=${encodeURIComponent(fullContent)}&author=${me}`, { method: 'POST', headers: auth() });
-            document.getElementById('postContent').value = '';
-            cancelReply(); refreshFeed();
+        async function postText() {
+            const val = document.getElementById('msgIn').value; if (!val.trim()) return;
+            const repParam = repData ? `reply_to_content=${encodeURIComponent(repData.content)}&reply_to_author=${repData.author}` : '';
+            await fetch(`${API}/post?content=${encodeURIComponent(val)}&author=${me}&${repParam}`, { method: 'POST', headers: auth() });
+            document.getElementById('msgIn').value = ''; closeRep(); 
+            document.getElementById('emoji-board').style.display = 'none';
+            getFeed();
         }
 
-        async function upload() {
-            const f = document.getElementById('mediaInput').files[0];
-            const fd = new FormData(); fd.append('author', me); fd.append('content', "Shared a memory ❤️"); fd.append('media', f);
-            await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-            refreshFeed();
+        async function uploadFile() {
+            const f = document.getElementById('fileIn').files[0];
+            const fd = new FormData(); fd.append('author', me); fd.append('content', "📸 Moment shared"); fd.append('media', f);
+            await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
+            getFeed();
         }
 
-        async function refreshFeed() {
-            const res = await fetch(`${API_URL}/posts`, { headers: auth() });
+        async function getFeed() {
+            const res = await fetch(`${API}/posts`, { headers: auth() });
             const posts = await res.json();
-            const cont = document.getElementById('postsContainer');
+            const cont = document.getElementById('feedCont');
             cont.innerHTML = posts.map(p => {
+                let quote = '';
+                if (p.reply_to_content) quote = `<div class="quoted-box"><span class="quoted-author">${p.reply_to_author}</span>${p.reply_to_content}</div>`;
                 let media = '';
                 if (p.image_url) {
-                    const u = `${API_URL}${p.image_url}`;
-                    const t = p.media_type || 'image';
-                    if (t === 'video') media = `<video src="${u}" controls></video>`;
-                    else if (t === 'audio') media = `<audio src="${u}" controls></audio>`;
-                    else media = `<img src="${u}" class="post-media">`;
+                    const u = `${API}${p.image_url}`;
+                    const type = p.media_type || 'image';
+                    if (type === 'audio') media = `<audio src="${u}" controls style="width:100%"></audio>`;
+                    else if (type === 'video') media = `<video src="${u}" controls class="post-media"></video>`;
+                    else media = `<img src="${u}" class="post-media" onclick="window.open('${u}')">`;
                 }
                 return `
-                <div class="post" data-id="${p.content.substring(0,30)}">
+                <div class="post" onmousedown="onSlide(event, '${p.author}', '${p.content.replace("'","")}')" ontouchstart="onSlide(event, '${p.author}', '${p.content.replace("'","")}')">
                     <div class="post-header"><span class="post-author">${p.author}</span><span>${new Date(p.timestamp).toLocaleTimeString()}</span></div>
-                    <div class="post-content">${p.content}</div>
+                    ${quote}
+                    <div>${p.content}</div>
                     ${media}
                 </div>`;
             }).join('');
         }
 
-        // Typing & Online
-        function pushTyping() {
-            if (!isTyping) { isTyping = true; ping(true); }
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => { isTyping = false; ping(false); }, 3000);
+        function onSlide(e, auth, cont) {
+            const t = e.target.closest('.post'); if (!t) return;
+            let sx = e.clientX || e.touches[0].clientX;
+            const move = (me) => {
+                let dx = (me.clientX || me.touches[0].clientX) - sx;
+                if (dx > 20) t.style.transform = `translateX(${Math.min(dx, 80)}px)`;
+            };
+            const end = (ee) => {
+                let dx = (ee.clientX || ee.changedTouches[0].clientX) - sx;
+                if (dx > 60) setRep(auth, cont);
+                t.style.transform = '';
+                document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
+                document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end);
+            };
+            document.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
+            document.addEventListener('touchmove', move); document.addEventListener('touchend', end);
         }
-        async function ping(t = false) { await fetch(`${API_URL}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
+
+        function setRep(a, c) {
+            repData = { author: a, content: c };
+            document.getElementById('reply-panel').style.display = 'block';
+            document.getElementById('rep-auth').innerText = a;
+            document.getElementById('rep-txt').innerText = c;
+            document.getElementById('msgIn').focus();
+        }
+        function closeRep() { repData = null; document.getElementById('reply-panel').style.display = 'none'; }
         
-        async function refreshStatus() {
-            const res = await fetch(`${API_URL}/status`, { headers: auth() });
-            const data = await res.json();
+        function tellTyping() { 
+            if (!isTyping) { isTyping = true; ping(true); } 
+            clearTimeout(timer); 
+            timer = setTimeout(() => { isTyping = false; ping(false); }, 4000); 
+        }
+        async function ping(t) { await fetch(`${API}/ping?author=${me}&typing=${t}`, { method: 'POST', headers: auth() }); }
+        
+        async function getStatus() {
+            const res = await fetch(`${API}/status`, { headers: auth() });
+            const d = await res.json();
             const opp = me === 'Caleb' ? 'Caroline' : 'Caleb';
             const el = document.getElementById(`st-${opp}`);
             if (el) {
-                if (data.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "var(--primary)"; }
-                else if (data[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#22c55e"; }
+                if (d.typing[opp]) { el.innerHTML = "Typing... ✍️"; el.style.color = "var(--primary)"; }
+                else if (d[opp]) { el.innerHTML = "Ready 🟢"; el.style.color = "#22c55e"; }
                 else { el.innerHTML = "Offline ⚪"; el.style.color = "#888"; }
             }
         }
 
-        // Audio Recording
-        let rec; let chunks = [];
-        async function toggleMic() {
-            const b = document.getElementById('micBtn');
-            if (b.classList.contains('rec')) {
-                rec.stop(); b.classList.remove('rec'); b.style.color = 'inherit';
-            } else {
-                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-                rec = new MediaRecorder(s); rec.start();
-                b.classList.add('rec'); b.style.color = 'red';
-                chunks = []; rec.ondataavailable = e => chunks.push(e.data);
-                rec.onstop = async () => {
-                    const bl = new Blob(chunks, { type: 'audio/webm' });
-                    const fd = new FormData(); fd.append('author', me); fd.append('content', "Voice message 🎤"); fd.append('media', bl, "voice.webm");
-                    await fetch(`${API_URL}/upload-media`, { method: 'POST', headers: auth(), body: fd });
-                    refreshFeed();
-                };
-            }
-        }
-
-        // Swipe & Reply logic
-        function setupSwipe() {
-            let sx = 0, target = null;
-            document.addEventListener('touchstart', e => { 
-                target = e.target.closest('.post');
-                if (target) sx = e.touches[0].clientX;
-            });
-            document.addEventListener('touchmove', e => {
-                if (!target) return;
-                const dist = e.touches[0].clientX - sx;
-                if (dist > 20 && dist < 100) target.style.transform = `translateX(${dist}px)`;
-            });
-            document.addEventListener('touchend', e => {
-                if (!target) return;
-                const dist = (e.changedTouches[0].clientX - sx);
-                if (dist > 60) {
-                    replyId = target.getAttribute('data-id');
-                    document.getElementById('reply-preview').style.display = 'block';
-                    document.getElementById('reply-text').innerText = replyId + "...";
-                }
-                target.style.transform = ''; target = null;
-            });
-            // Desktop helper: click to reply
-            document.addEventListener('click', e => {
-                const p = e.target.closest('.post');
-                if (p && !e.target.closest('audio, img, video')) {
-                     replyId = p.getAttribute('data-id');
-                     document.getElementById('reply-preview').style.display = 'block';
-                     document.getElementById('reply-text').innerText = replyId + "...";
-                }
-            });
-        }
-
-        function cancelReply() { replyId = null; document.getElementById('reply-preview').style.display = 'none'; }
-
-        // Navigation
-        function show(sec) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`${sec}-section`).classList.add('active');
+        function setMenu(s) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`${s}-sec`).classList.add('active');
             document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-            document.getElementById(`nav-${sec}`).classList.add('active');
-            
-            if (sec === 'gallery') loadGallery();
-            if (sec === 'calls') loadCalls();
+            document.getElementById(`n-${s}`).classList.add('active');
+            if (s === 'gallery') loadGall();
+            if (s === 'calls') loadCalls();
         }
 
-        async function loadGallery() {
-            const res = await fetch(`${API_URL}/posts`, { headers: auth() });
-            const posts = await res.json();
-            document.getElementById('galleryContainer').innerHTML = posts
-                .filter(p => p.image_url && (!p.media_type || p.media_type === 'image'))
-                .map(p => `<img src="${API_URL}${p.image_url}" class="gallery-item" onclick="window.open('${API_URL}${p.image_url}')">`).join('');
+        async function loadGall() {
+            const res = await fetch(`${API}/posts`, { headers: auth() });
+            const ps = await res.json();
+            document.getElementById('gallCont').innerHTML = ps
+                .filter(p => p.image_url && (!p.media_type || p.media_type==='image'))
+                .map(p => `<img src="${API}${p.image_url}" style="width:100%; border-radius:10px;">`).join('');
         }
 
         async function loadCalls() {
-            const res = await fetch(`${API_URL}/calls`, { headers: auth() });
+            const res = await fetch(`${API}/calls`, { headers: auth() });
             const logs = await res.json();
-            document.getElementById('callsContainer').innerHTML = logs.map(l => `
-                <div class="call-log-item">
-                    <div class="call-log-icon">${l.type === 'Video' ? '📹' : '📞'}</div>
-                    <div style="flex:1">
-                        <div style="font-weight:bold">${l.type} Call</div>
-                        <div style="font-size:0.8rem; color:#888">${l.caller} → ${l.receiver}</div>
-                    </div>
-                    <div style="font-size:0.8rem; color:#888">${new Date(l.timestamp).toLocaleTimeString()}</div>
+            document.getElementById('callsCont').innerHTML = logs.map(l => `
+                <div style="background:white; padding:12px; border-radius:10px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+                    <i class="fas fa-${l.type==='Video'?'video':'phone'}" style="color:var(--primary); margin-right:10px;"></i>
+                    <b>${l.type} Call</b> <span style="float:right; font-size:0.8rem; color:#888">${new Date(l.timestamp).toLocaleTimeString()}</span>
                 </div>`).join('');
+        }
+
+        let micRec; let micCh = [];
+        async function handleVoice() {
+            const b = document.getElementById('voiceBtn');
+            if (b.classList.contains('active')) {
+                micRec.stop(); b.classList.remove('active'); b.style.color = 'inherit';
+            } else {
+                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+                micRec = new MediaRecorder(s); micRec.start();
+                b.classList.add('active'); b.style.color = 'red';
+                micCh = []; micRec.ondataavailable = e => micCh.push(e.data);
+                micRec.onstop = async () => {
+                    const bl = new Blob(micCh, { type: 'audio/webm' });
+                    const fd = new FormData(); fd.append('author', me); fd.append('content', "🎤 Voice message"); fd.append('media', bl, "v.webm");
+                    await fetch(`${API}/upload-media`, { method: 'POST', headers: auth(), body: fd });
+                    getFeed();
+                };
+            }
         }
     </script>
 </body>

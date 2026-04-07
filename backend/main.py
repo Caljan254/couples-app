@@ -38,9 +38,12 @@ class Post(BaseModel):
     author: str
     content: str
     image_url: Optional[str] = None
+    media_type: Optional[str] = None # New field for image, video, audio etc.
     timestamp: str
     hearts: int = 0
     comments: List[dict] = []
+    reply_to_content: Optional[str] = None
+    reply_to_author: Optional[str] = None
 
 # Store posts and calls in memory
 posts = []
